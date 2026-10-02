@@ -114,6 +114,45 @@
 #driverStatsTab .driver-stat-card {min-height:190px;}
 #driverStatsTab .driver-stat-card .mini-viz {width:100%;}
 #driverStatsTab #appearancesHeatmap {min-width:0; max-width:100%; overflow-x:auto;}
+#driverStatsTab .driver-wins-card,
+#driverStatsTab .driver-codriver-card {grid-column:1/-1;}
+.driver-stat-note {margin:0 0 12px;color:#9aa5bd;font-size:12px;line-height:1.5;}
+.driver-wins-decade + .driver-wins-decade {margin-top:18px;padding-top:14px;border-top:1px solid #252a36;}
+.driver-wins-decade h4 {margin:0 0 10px;color:#cbd5e1;font-size:13px;}
+.driver-wins-decade-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;}
+.driver-win-entry {min-width:0;padding:10px 12px;border:1px solid #252a36;border-radius:9px;background:#11141b;}
+.driver-win-entry strong {display:block;color:#fff;font-size:14px;}
+.driver-win-entry span {display:block;margin-top:3px;color:#cbd5e1;font-size:12px;line-height:1.4;overflow-wrap:anywhere;}
+.driver-win-entry small {display:block;margin-top:3px;color:#9aa5bd;font-size:11px;line-height:1.4;overflow-wrap:anywhere;}
+.driver-codriver-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;}
+.driver-codriver-pair {display:flex;min-width:0;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border:1px solid #252a36;border-radius:9px;background:#11141b;}
+.driver-codriver-names {min-width:0;color:#cbd5e1;font-size:13px;line-height:1.4;overflow-wrap:anywhere;}
+.driver-codriver-count {flex:none;padding:5px 8px;border:1px solid #2a5bd7;border-radius:999px;background:#152345;color:#dbeafe;font-size:11px;font-weight:800;white-space:nowrap;}
+.driver-heatmap-legend {display:flex;flex-wrap:wrap;gap:8px 16px;margin:0 0 12px;color:#9aa5bd;font-size:12px;}
+.driver-heatmap-legend span {display:inline-flex;align-items:center;gap:6px;}
+.driver-heatmap-swatch {width:12px;height:12px;border:1px solid #374151;border-radius:3px;background:#252a36;}
+.driver-heatmap-swatch.has-appearance {border-color:#2563eb;background:#3b82f6;}
+.driver-heatmap-grid {width:max-content;min-width:100%;}
+.driver-heatmap-row {display:grid;grid-template-columns:132px repeat(63,12px);gap:3px;align-items:center;margin:3px 0;}
+.driver-heatmap-name {overflow:hidden;color:#cbd5e1;font-size:11px;font-weight:700;text-overflow:ellipsis;white-space:nowrap;}
+.driver-heatmap-year {color:#9aa5bd;font-size:8px;text-align:center;}
+.driver-heatmap-cell {width:12px;height:12px;border:1px solid #252a36;border-radius:3px;background:#1a1d25;}
+.driver-heatmap-cell.has-appearance {border-color:#2563eb;background:#3b82f6;}
+html.light #driverStatsTab .driver-stat-note,
+html.light #driverStatsTab .driver-heatmap-legend,
+html.light #driverStatsTab .driver-heatmap-name {color:#526176;}
+html.light #driverStatsTab .driver-wins-decade h4,
+html.light #driverStatsTab .driver-win-entry strong,
+html.light #driverStatsTab .driver-codriver-names {color:#111827;}
+html.light #driverStatsTab .driver-win-entry,
+html.light #driverStatsTab .driver-codriver-pair {border-color:#d5dbe3;background:#fff;}
+html.light #driverStatsTab .driver-win-entry span {color:#374151;}
+html.light #driverStatsTab .driver-win-entry small {color:#526176;}
+html.light #driverStatsTab .driver-heatmap-cell {border-color:#d5dbe3;background:#e5e7eb;}
+html.light #driverStatsTab .driver-heatmap-cell.has-appearance {border-color:#2563eb;background:#3b82f6;}
+@media (max-width:600px) {
+  .driver-codriver-list {grid-template-columns:1fr;}
+}
 .did-you-know {margin:20px 0 28px;padding:18px 20px;border:1px solid #30394b;border-left:4px solid #2a5bd7;border-radius:12px;background:linear-gradient(145deg,#171a22,#11141b);box-shadow:0 6px 18px rgba(0,0,0,.14);}
 .did-you-know-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
 .did-you-know-heading h2 {margin:0;color:#fff;font-size:18px;}
@@ -1473,12 +1512,12 @@ html.light .vs-auto-item > small {
     <section class="record-category" aria-labelledby="driverStatsHeading">
       <h2 id="driverStatsHeading">Bathurst Driver Statistics</h2>
       <div class="record-category-grid driver-stat-grid">
-        <article class="record-entry driver-stat-card"><h3>Starts by Decade</h3><div id="startsByDecadeViz" class="mini-viz"></div></article>
-        <article class="record-entry driver-stat-card"><h3>Wins Timeline (Brock era to now)</h3><div id="winsTimelineViz" class="mini-viz"></div></article>
+        <article class="record-entry driver-stat-card"><h3>Recorded Car Entries by Decade</h3><p class="driver-stat-note">One result row per car. Available detailed entries begin in 1963.</p><div id="startsByDecadeViz" class="mini-viz"></div></article>
+        <article class="record-entry driver-stat-card driver-wins-card"><h3>Bathurst Winners Timeline (1972–2025)</h3><div id="winsTimelineViz"></div></article>
         <article class="record-entry driver-stat-card"><h3>Manufacturer History</h3><div id="manufacturerHistoryViz"></div></article>
-        <article class="record-entry driver-stat-card driver-heatmap-card"><h3>Bathurst Appearances Heatmap (Top 20 drivers)</h3><div id="appearancesHeatmap" class="heatmap"></div></article>
+        <article class="record-entry driver-stat-card driver-heatmap-card"><h3>Bathurst Appearances Heatmap (Top 20 drivers, 1963–2025)</h3><div class="driver-heatmap-legend" aria-label="Heatmap legend"><span><i class="driver-heatmap-swatch has-appearance" aria-hidden="true"></i>Recorded Bathurst appearance</span><span><i class="driver-heatmap-swatch" aria-hidden="true"></i>No recorded appearance</span></div><div id="appearancesHeatmap" class="heatmap" role="grid" aria-label="Driver Bathurst appearances by year"></div></article>
         <article class="record-entry driver-stat-card"><h3>Best Finishing Positions</h3><div id="bestFinishesViz"></div></article>
-        <article class="record-entry driver-stat-card"><h3>Co-driver Network (Most frequent pairings)</h3><div id="codriverNetworkViz"></div></article>
+        <article class="record-entry driver-stat-card driver-codriver-card"><h3>Most Frequent Co-driver Pairings</h3><div id="codriverNetworkViz"></div></article>
       </div>
     </section>
   </section>
@@ -5721,13 +5760,17 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const drivers = {};
     const manufacturers = {};
     const startsByDecade = {};
-    const winsByYear = {};
+    const winningEvents = new Map();
     STATS_DATA.forEach(e=>{
-      const year = e.year;
+      const year = Number(e.year);
+      if (!Number.isInteger(year)) return;
       const dec = Math.floor(year/10)*10;
       startsByDecade[dec] = (startsByDecade[dec]||0)+1;
       if(e.officialPos===1){
-        winsByYear[year] = (winsByYear[year]||0)+1;
+        if (year >= 1972 && (!e.raceCategory || e.raceCategory === 'main')) {
+          const eventKey = `${e.yearKey || year}:${e.raceCategory || 'main'}`;
+          if (!winningEvents.has(eventKey)) winningEvents.set(eventKey, e);
+        }
         const make = e.make || e.vehicle || 'Other';
         manufacturers[make] = (manufacturers[make]||0)+1;
       }
@@ -5747,12 +5790,40 @@ document.addEventListener('DOMContentLoaded', ()=>{
     // Starts by decade viz
     const sDiv = document.getElementById('startsByDecadeViz');
     if(sDiv){
-      const max = Math.max(...Object.values(startsByDecade));
-      sDiv.innerHTML = Object.keys(startsByDecade).sort().map(dec=>{
+      const max = Math.max(...Object.values(startsByDecade),1);
+      sDiv.innerHTML = Object.keys(startsByDecade).sort((a,b)=>Number(a)-Number(b)).map(dec=>{
         const v = startsByDecade[dec];
         const pct = (v/max*100).toFixed(0);
         return `<div class="manufacturer-bar"><span class="bar-label">${dec}s</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div><span style="font-size:11px; width:30px;">${v}</span></div>`;
       }).join('');
+    }
+    const wDiv = document.getElementById('winsTimelineViz');
+    if (wDiv) {
+      const decades = new Map();
+      Array.from(winningEvents.values())
+        .sort((a,b)=>Number(a.year)-Number(b.year))
+        .forEach(entry => {
+          const decade = Math.floor(Number(entry.year)/10)*10;
+          if (!decades.has(decade)) decades.set(decade, []);
+          decades.get(decade).push(entry);
+        });
+      wDiv.innerHTML = decades.size
+        ? Array.from(decades, ([decade, entries]) => `
+          <section class="driver-wins-decade" aria-label="${decade}s Bathurst winners">
+            <h4>${decade}s · ${entries.length} race wins</h4>
+            <div class="driver-wins-decade-grid">${entries.map(entry => {
+              const drivers = (entry.drivers || []).map(driver => driver.name).filter(Boolean).join(' / ');
+              const car = String(entry.car || '').trim();
+              const vehicle = String(entry.vehicle || entry.make || '').trim();
+              return `<div class="driver-win-entry">
+                <strong>${entry.year}</strong>
+                <span>${escapeHtml(drivers || 'Winner name not recorded')}</span>
+                <small>${car ? `#${escapeHtml(car)}${vehicle ? ' · ' : ''}` : ''}${escapeHtml(vehicle)}</small>
+              </div>`;
+            }).join('')}</div>
+          </section>
+        `).join('')
+        : '<p class="driver-stat-note">No Bathurst winner results are available for this timeline.</p>';
     }
     // Manufacturer history
     const mDiv = document.getElementById('manufacturerHistoryViz');
@@ -5783,30 +5854,41 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const hDiv = document.getElementById('appearancesHeatmap');
     if(hDiv){
       const top20 = Object.entries(drivers).sort((a,b)=>b[1].years.size-a[1].years.size).slice(0,20);
-      hDiv.innerHTML = top20.map(([name,d])=>{
-        const years = Array.from(d.years).sort();
-        const cells = [];
-        for(let y=1960; y<=2025; y++){
-          const has = years.includes(y);
-          cells.push(`<div class="heatmap-cell ${has?'has':''}" title="${y}">${has?'●':''}</div>`);
-        }
-        return `<div style="grid-column:1/-1; display:flex; gap:4px; align-items:center; margin:2px 0;"><span style="width:120px; font-size:11px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${name}</span><div style="display:grid; grid-template-columns:repeat(66,1fr); gap:2px; flex:1;">${cells.join('')}</div></div>`;
+      const years = Array.from({length:2025-1963+1},(_,index)=>1963+index);
+      const header = `<div class="driver-heatmap-row" role="row"><span class="driver-heatmap-name">Driver</span>${years.map(year=>`<span class="driver-heatmap-year" role="columnheader" title="${year}">${year===1963 || year%10===0 ? String(year).slice(-2) : ''}</span>`).join('')}</div>`;
+      const rows = top20.map(([name,driver])=>{
+        const activeYears = new Set(Array.from(driver.years,Number));
+        const cells = years.map(year=>{
+          const has = activeYears.has(year);
+          const state = has ? 'recorded appearance' : 'no recorded appearance';
+          return `<span class="driver-heatmap-cell ${has?'has-appearance':''}" role="gridcell" title="${year}: ${state}" aria-label="${escapeHtml(name)}, ${year}: ${state}"></span>`;
+        });
+        return `<div class="driver-heatmap-row" role="row"><span class="driver-heatmap-name" role="rowheader" title="${escapeHtml(name)}">${escapeHtml(name)}</span>${cells.join('')}</div>`;
       }).join('');
+      hDiv.innerHTML = `<div class="driver-heatmap-grid" role="rowgroup">${header}${rows}</div>`;
     }
     // Co-driver network
     const cDiv = document.getElementById('codriverNetworkViz');
     if(cDiv){
-      const pairs={};
+      const pairs=new Map();
+      const seenPairStarts=new Set();
       STATS_DATA.forEach(e=>{
         if(e.drivers && e.drivers.length===2){
-          const a = e.drivers[0].name?.trim(), b = e.drivers[1].name?.trim();
-          if(!a||!b) return;
-          const key = [a,b].sort().join(' + ');
-          pairs[key]=(pairs[key]||0)+1;
+          const names=e.drivers.map(driver=>String(driver.name||'').trim());
+          if(names.some(name=>!name)) return;
+          const orderedNames=names.sort((a,b)=>a.localeCompare(b));
+          const pairKey=orderedNames.map(name=>name.toLowerCase()).join('|');
+          const eventKey=`${e.yearKey||e.year}:${e.raceCategory||'main'}:${pairKey}`;
+          if(seenPairStarts.has(eventKey)) return;
+          seenPairStarts.add(eventKey);
+          if(!pairs.has(pairKey)) pairs.set(pairKey,{names:orderedNames,count:0});
+          pairs.get(pairKey).count++;
         }
       });
-      const topPairs = Object.entries(pairs).sort((a,b)=>b[1]-a[1]).slice(0,8);
-      cDiv.innerHTML = topPairs.map(([pair,count])=>`<div class="manufacturer-bar"><span class="bar-label" style="width:200px;">${pair}</span><span style="font-size:11px;">${count} races together</span></div>`).join('');
+      const topPairs=Array.from(pairs.values())
+        .sort((a,b)=>b.count-a.count)
+        .slice(0,8);
+      cDiv.innerHTML=`<div class="driver-codriver-list" role="list">${topPairs.map(({names,count})=>`<div class="driver-codriver-pair" role="listitem"><span class="driver-codriver-names">${names.map(escapeHtml).join(' + ')}</span><span class="driver-codriver-count">${count} ${count===1?'race':'races'} together</span></div>`).join('')}</div>`;
     }
     const insights = [];
     const fourDecadeDrivers = Object.entries(drivers)
