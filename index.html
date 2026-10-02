@@ -6080,11 +6080,16 @@ document.addEventListener('DOMContentLoaded', ()=>{
         : 'Statistics combine detailed Bathurst result rows with lap-chart and driver-summary workbook data. Race laps are car totals credited to each listed driver, not individual stint laps.';
     const profile = driver => {
       const carHistory = new Map();
+      const manufacturerHistory = new Map();
       (driver.entries || []).forEach(entry => {
         const year = Number(entry.year);
+        const make = String(entry.make || '').trim();
+        if (make && Number.isInteger(year)) {
+          if (!manufacturerHistory.has(make)) manufacturerHistory.set(make, new Set());
+          manufacturerHistory.get(make).add(year);
+        }
         const car = String(entry.car ?? '').trim();
         if (!Number.isInteger(year) || !car) return;
-        const make = String(entry.make || '').trim();
         const vehicle = String(entry.vehicle || '').trim();
         const description = vehicle && make &&
           vehicle.toLowerCase() !== make.toLowerCase() &&
@@ -6096,6 +6101,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
       });
       const cars = Array.from(carHistory.values())
         .sort((a,b) => a.year - b.year || a.car.localeCompare(b.car, undefined, { numeric:true }));
+      const manufacturers = Array.from(manufacturerHistory.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([make, years]) =>
+          `${escapeHtml(make)} (${Array.from(years).sort((a,b) => a-b).join(', ')})`
+        );
       const family = familyLinkFor(driver);
       const familyText = family
         ? `${family.relation} with ${family.members.find(name=>name.toLowerCase()!==driver.key)}.`
@@ -6108,15 +6118,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
       const bornText = driver.birthDate || driver.birthYear || 'Not recorded';
       const bathurst = driver.bathurst;
       const bathurstSummary = bathurst?.starts === null || bathurst?.starts === undefined
-        ? 'Not recorded in the 2025 driver summary'
+        ? ''
         : `${bathurst.starts} starts · ${bathurst.wins ?? '—'} wins · ${bathurst.podiums ?? '—'} top-three finishes · ${bathurst.poles ?? '—'} poles · ${bathurst.bestFinish || 'best finish not recorded'} · ${bathurst.careerSpan || 'span not recorded'}`;
       return `<article class="vs-driver-profile">
         <h3>${escapeHtml(driver.displayName)}</h3>
         <p><strong>Born:</strong> ${escapeHtml(bornText)}</p>
         <p><strong>Race laps:</strong> ${escapeHtml(lapText)}</p>
-        <p><strong>Cars raced:</strong> ${cars.length ? escapeHtml(cars.map(({year, car, description}) => `${year}, #${car}${description ? ` ${description}` : ''}`).join('; ')) : 'Not recorded'}</p>
-        <p><strong>Manufacturers:</strong> ${Array.from(driver.makes || []).length ? Array.from(driver.makes).map(escapeHtml).join(', ') : 'Not recorded'}</p>
-        <p><strong>Bathurst workbook snapshot (pre-2025):</strong> ${escapeHtml(bathurstSummary)}</p>
+        <p><strong>Cars raced:</strong> ${cars.length ? cars.map(({year, car, description}) => `<strong>${year}</strong>, #${escapeHtml(car)}${description ? ` ${escapeHtml(description)}` : ''}`).join('; ') : 'Not recorded'}</p>
+        <p><strong>Manufacturers:</strong> ${manufacturers.length ? manufacturers.join(', ') : 'Not recorded'}</p>
+        ${bathurstSummary ? `<p><strong>Bathurst workbook snapshot (pre-2025):</strong> ${escapeHtml(bathurstSummary)}</p>` : ''}
         <p><strong>Family:</strong> ${escapeHtml(familyText)}</p>
         ${yearsFor(driver).length ? `<p><strong>Years:</strong> ${yearsFor(driver).join(', ')}</p>` : ''}
       </article>`;
