@@ -132,10 +132,14 @@
 .stats-menu-item strong {font-size:14px;}
 .stats-menu-item span {color:#9aa5bd; font-size:12px;}
 .record-research-note {padding:14px 16px; border-left:3px solid #2a5bd7; border-radius:0 8px 8px 0; background:#111723; color:#9aa5bd; font-size:13px; line-height:1.55;}
-.vs-suggestions {margin:0 0 20px; color:#9aa5bd; font-size:13px;}
-.vs-suggestion-list {display:flex; flex-wrap:wrap; gap:8px; margin-top:8px;}
-.vs-suggestion-list button {padding:7px 11px; border:1px solid #2a2f40; border-radius:999px; background:#171a22; color:#cbd5e1; font:inherit; font-size:12px; font-weight:700; cursor:pointer;}
-.vs-suggestion-list button:hover,.vs-suggestion-list button:focus-visible {border-color:#2a5bd7; background:#152345; color:#fff;}
+.vs-heading-row {display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:8px;}
+.vs-heading-row h1 {margin:0;}
+.vs-popular-matchup {max-width:100%; padding:9px 34px 9px 12px; border:1px solid #2a2f40; border-radius:8px; background:#171a22; color:#cbd5e1; font:inherit; font-size:13px; cursor:pointer;}
+.vs-popular-matchup:focus-visible {outline:2px solid #2a5bd7; outline-offset:2px;}
+.vs-chart-legend {display:flex; flex-wrap:wrap; gap:5px 12px; padding:4px 5px 2px; color:#9aa5bd; font-size:10px; font-weight:500;}
+.vs-chart-legend span {display:inline-flex; align-items:center; gap:5px;}
+.vs-chart-line-key {width:14px; height:0; border-top:2px solid #2a5bd7;}
+.vs-chart-win-key {width:8px; height:8px; border:1px solid #0e1016; border-radius:50%; background:#ffd400;}
 .vs-driver-details {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin:16px 0;}
 .vs-driver-profile {min-width:0; padding:16px; border:1px solid #252a36; border-radius:12px; background:#12151d;}
 .vs-driver-profile h3 {margin:0 0 12px; color:#fff;}
@@ -147,6 +151,10 @@
 .early-results-years .timeline-year.active {background:#2a5bd7 !important; color:#fff !important;}
 .early-results-year-select {position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
 .early-results-year-select:focus-within {position:static; width:auto; height:auto; margin:0; clip:auto; white-space:normal;}
+@media (max-width:600px) {
+  .vs-heading-row {align-items:stretch; flex-direction:column; gap:10px;}
+  .vs-popular-matchup {width:100%;}
+}
 @media (min-width:600px) {
   .record-category-grid {grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px;}
   .stats-menu-grid {grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px;}
@@ -811,16 +819,18 @@ html.light .vs-data-coverage {
   color:#273142;
 }
 
-html.light .vs-suggestion-list button {
-  background:#fff;
-  border-color:#c4ccd7;
-  color:#111827;
-}
+
 
 html.light #vsCompareTab input {
   background:#fff !important;
   border-color:#aeb8c6 !important;
   color:#111827 !important;
+}
+
+html.light .vs-popular-matchup {
+  background:#fff;
+  border-color:#aeb8c6;
+  color:#111827;
 }
 
 html.light #vsAuto1,
@@ -1431,7 +1441,13 @@ html.light .vs-auto-item > small {
   </section>
 
   <section id="vsCompareTab" hidden>
-    <h1>Driver vs Driver Comparison</h1>
+    <div class="vs-heading-row">
+      <h1>Driver vs Driver Comparison</h1>
+      <label class="sr-only" for="vsPopularMatchup">Popular matchups</label>
+      <select id="vsPopularMatchup" class="vs-popular-matchup" aria-label="Popular matchups">
+        <option value="">Popular matchups</option>
+      </select>
+    </div>
     <p class="sub">Compare Bathurst results, podiums, car numbers, manufacturers, race laps and known family connections.</p>
     <div style="display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; position:relative;">
       <div style="flex:1; min-width:200px; position:relative;">
@@ -1443,10 +1459,6 @@ html.light .vs-auto-item > small {
         <div id="vsAuto2" style="position:absolute;top:100%;left:0;right:0;background:#12151d;border:1px solid #2a2f40;border-top:none;border-radius:0 0 10px 10px;max-height:200px;overflow-y:auto;z-index:10;display:none;"></div>
       </div>
       <button id="vsCompareBtn" style="padding:10px 16px; border-radius:10px; background:#2a5bd7; color:#fff; border:none; font-weight:800; cursor:pointer; height:42px;">Compare</button>
-    </div>
-    <div class="vs-suggestions">
-      <strong>Popular matchups</strong>
-      <div id="vsSuggestions" class="vs-suggestion-list" aria-label="Suggested driver comparisons"></div>
     </div>
     <div id="vsResults" style="margin-top:16px;"></div>
     <div style="margin-top:12px; font-size:11px; color:#6b768f;">Tip: Permanent URLs like /driver/peter-brock will auto-fill this. Try /driver/peter-brock vs /driver/dick-johnson</div>
@@ -6004,8 +6016,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const yFor = (p)=> padT + ((p-1)/31)*(H-padT-padB);
     let d='';
     entries.forEach(e=>{ if(e.officialPos>0){ const x=xFor(e.year), y=yFor(e.officialPos); d+= (d===''?'M':'L')+x.toFixed(1)+','+y.toFixed(1)+' '; } });
-    const dots = entries.filter(e=>e.officialPos>0).map(e=>{ const x=xFor(e.year), y=yFor(e.officialPos); const isWin=e.officialPos===1; return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${isWin?4:2.5}" fill="${isWin?'#ffd400':color}" stroke="#0e1016" stroke-width="1"/>`; }).join('');
-    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%; height:${H}px; display:block;"><path d="${d.trim()}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/><g>${dots}</g><text x="${W/2}" y="${H-1}" text-anchor="middle" font-size="8" fill="#6b768f">${minY} → ${maxY} — lower is better</text></svg>`;
+    const dots = entries.filter(e=>e.officialPos>0).map(e=>{ const x=xFor(e.year), y=yFor(e.officialPos); const isWin=e.officialPos===1; return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${isWin?5:3.5}" fill="${isWin?'#ffd400':color}" stroke="#0e1016" stroke-width="1"/>`; }).join('');
+    return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="width:100%; height:${H}px; display:block;"><path d="${d.trim()}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round"/><g>${dots}</g><text x="${W/2}" y="${H-1}" text-anchor="middle" font-size="9" fill="#6b768f">${minY} → ${maxY}</text></svg>`;
   }
 
   function buildComparisonTable(){
@@ -6041,16 +6053,13 @@ document.addEventListener('DOMContentLoaded', ()=>{
       {label:'DNFs', get:d=>d.dnfs, fmt:(v,d)=>v===null || !d.recordedStatusStarts ? 'Not recorded' : `${v} (${d.recordedStatusStarts}/${d.starts} status records)`, lowerBetter:true},
       {label:'Race laps completed', get:d=>d.totalLaps, fmt:(v,d)=>v===null || !d.recordedLapStarts ? 'Not recorded' : `${v.toLocaleString()} (${d.recordedLapStarts}/${d.starts} starts have lap data)`, note:'car race laps credited to each listed driver; not individual stint laps', higherBetter:true},
       {label:'Average finish', get:d=> d.finishes? d.sumPos/d.finishes : 99, fmt:(v,d)=>d.finishes ? `P${v.toFixed(1)}` : 'Not recorded', lowerBetter:true},
-      {label:'ATCC race starts', get:d=>d.atcc?.starts, fmt:v=>v ?? 'Not recorded', note:'career summary in results workbook', higherBetter:true},
-      {label:'ATCC race wins', get:d=>d.atcc?.wins, fmt:v=>v ?? 'Not recorded', higherBetter:true},
-      {label:'ATCC podiums', get:d=>d.atcc?.podiums, fmt:v=>v ?? 'Not recorded', higherBetter:true},
       {label:'Manufacturers raced', get:d=>0, fmt:(v,d)=> Array.from(d.makes||[]).join(', ') || 'Not recorded'}
     ];
     const summaryHeading = (driver, years, color) =>
       `<th class="driver-head">${escapeHtml(driver.displayName)} <small>${
         driver.starts === null ? 'Career statistics unavailable' : `${driver.starts} starts`
       }${years.length ? ` · ${years[0]}–${years[years.length-1]}` : ''}</small>
-      <div style="margin-top:8px; background:#0e1016; border-radius:8px; padding:4px; border:1px solid #1e2332;">${sparklineSVG(driver, 220, 60, color)}</div></th>`;
+      <div style="margin-top:8px; background:#0e1016; border-radius:8px; padding:6px; border:1px solid #1e2332;">${sparklineSVG(driver, 300, 100, color)}<div class="vs-chart-legend"><span><i class="vs-chart-line-key" style="border-color:${color};"></i>Finish position (P1 at top)</span><span><i class="vs-chart-win-key"></i>Win</span></div></div></th>`;
     let h = `<table class="vs-table"><thead><tr><th></th>${summaryHeading(d1,years1,'#2a5bd7')}${summaryHeading(d2,years2,'#ffd400')}</tr></thead><tbody>`;
     metrics.forEach(m=>{
       const v1raw = m.get(d1), v2raw = m.get(d2);
@@ -6070,7 +6079,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
       : d1.starts === null || d2.starts === null
         ? 'No Bathurst result rows are available for one or both selected drivers. No career statistics are estimated; refresh all three spreadsheets if they have not been loaded.'
         : 'Statistics combine detailed Bathurst result rows with lap-chart and driver-summary workbook data. Race laps are car totals credited to each listed driver, not individual stint laps.';
-    h += `<p class="vs-data-coverage">${escapeHtml(dataCoverage)}</p>`;
     const profile = driver => {
       const cars = Array.from(driver.carNumbers || []).sort((a,b)=>a.localeCompare(b,undefined,{numeric:true}));
       const vehicles = Array.from(driver.vehicles || []);
@@ -6084,10 +6092,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         ? 'Race-lap totals are not included in the available career summary.'
         : `${driver.totalLaps.toLocaleString()} laps across ${driver.recordedLapStarts} starts with lap counts recorded.`;
       const bornText = driver.birthDate || driver.birthYear || 'Not recorded';
-      const atcc = driver.atcc;
-      const atccText = atcc?.starts === null || atcc?.starts === undefined
-        ? 'ATCC career figures not recorded'
-        : `${atcc.starts} starts · ${atcc.wins ?? '—'} wins · ${atcc.podiums ?? '—'} podiums · ${atcc.poles ?? '—'} poles${atcc.careerSpan ? ` · ${atcc.careerSpan}` : ''}`;
       const bathurst = driver.bathurst;
       const bathurstSummary = bathurst?.starts === null || bathurst?.starts === undefined
         ? 'Not recorded in the 2025 driver summary'
@@ -6099,7 +6103,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
         <p><strong>Cars raced:</strong> ${cars.length ? cars.map(car=>`#${escapeHtml(car)}`).join(', ') : 'Not recorded'}${vehicles.length ? ` · ${vehicles.map(escapeHtml).join(', ')}` : ''}</p>
         <p><strong>Manufacturers:</strong> ${Array.from(driver.makes || []).length ? Array.from(driver.makes).map(escapeHtml).join(', ') : 'Not recorded'}</p>
         <p><strong>Bathurst workbook snapshot (pre-2025):</strong> ${escapeHtml(bathurstSummary)}</p>
-        <p><strong>ATCC career:</strong> ${escapeHtml(atccText)}</p>
         <p><strong>Family:</strong> ${escapeHtml(familyText)}</p>
         ${yearsFor(driver).length ? `<p><strong>Years:</strong> ${yearsFor(driver).join(', ')}</p>` : ''}
       </article>`;
@@ -6112,6 +6115,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     if (sharedFamily) {
       h += `<p class="vs-comparison-note">${escapeHtml(d1.displayName)} and ${escapeHtml(d2.displayName)} are ${escapeHtml(sharedFamily.relation.toLowerCase())}.</p>`;
     }
+    h += `<p class="vs-data-coverage">${escapeHtml(dataCoverage)}</p>`;
     h += `<div style="margin-top:12px;"><button id="copyVsLink" style="padding:8px 12px; border-radius:999px; background:#171a22; border:1px solid #2a2f40; color:#9aa5bd; font-size:11px; cursor:pointer;">Copy link</button></div>`;
     out.innerHTML = h;
     document.getElementById('copyVsLink')?.addEventListener('click', (e)=>{
@@ -6131,7 +6135,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     const input2=document.getElementById('vsDriver2');
     const box1=document.getElementById('vsAuto1');
     const box2=document.getElementById('vsAuto2');
-    const suggestions=document.getElementById('vsSuggestions');
+    const popularMatchup=document.getElementById('vsPopularMatchup');
     const suggestedPairs = [
       ['Peter Brock','Dick Johnson'],
       ['Craig Lowndes','Jamie Whincup'],
@@ -6147,15 +6151,15 @@ document.addEventListener('DOMContentLoaded', ()=>{
       ['John Bowe','Russell Ingall'],
       ['Rick Kelly','Todd Kelly']
     ];
-    if (suggestions) {
-      suggestions.innerHTML = suggestedPairs.map(([first, second]) =>
-        `<button type="button" data-first="${escapeHtml(first)}" data-second="${escapeHtml(second)}">${escapeHtml(first)} vs ${escapeHtml(second)}</button>`
+    if (popularMatchup) {
+      popularMatchup.innerHTML += suggestedPairs.map(([first, second], index) =>
+        `<option value="${index}">${escapeHtml(first)} vs ${escapeHtml(second)}</option>`
       ).join('');
-      suggestions.addEventListener('click', event => {
-        const button = event.target.closest('[data-first][data-second]');
-        if (!button) return;
-        selected1 = findDriver(button.dataset.first);
-        selected2 = findDriver(button.dataset.second);
+      popularMatchup.addEventListener('change', () => {
+        const pair = suggestedPairs[Number(popularMatchup.value)];
+        if (!pair) return;
+        selected1 = findDriver(pair[0]);
+        selected2 = findDriver(pair[1]);
         if (!selected1 || !selected2) return;
         input1.value = selected1.displayName;
         input2.value = selected2.displayName;
