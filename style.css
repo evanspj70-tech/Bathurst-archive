@@ -1,0 +1,9 @@
+
+.tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:20px 0;}
+.tabbtn{padding:16px;border-radius:8px;border:1px solid #2a2f40;background:#1e222e;color:#9aa5bd;cursor:pointer;}
+.tabbtn.active{background:#d4d0c8;color:#1a1d25;border-bottom:3px solid #cc2229;}
+.cover-gallery-grid{display:grid !important;grid-template-columns:repeat(auto-fill,minmax(160px,1fr)) !important;gap:16px !important;}
+body{background:#0a0c10;color:#cbd5e1;font-family:system-ui,sans-serif;margin:0;}
+.wrap{max-width:1200px;margin:0 auto;padding:20px;}
+#vsAuto1,#vsAuto2{display:none;}
+#vsAuto1.open,#vsAuto2.open{display:block !important;}
