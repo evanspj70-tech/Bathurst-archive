@@ -108,6 +108,55 @@
 .record-entry h3 {margin:0 0 10px; color:#cbd5e1; font-size:13px; line-height:1.4; letter-spacing:.04em; text-transform:uppercase;}
 .record-value {margin:0; color:#fff; font-size:18px; font-weight:800; line-height:1.35; overflow-wrap:anywhere;}
 .record-detail {margin:8px 0 0; color:#9aa5bd; font-size:13px; line-height:1.5; overflow-wrap:anywhere;}
+#driverStatsTab {max-width:1200px; margin:0 auto; padding:8px 0 28px;}
+#driverStatsTab > header {margin-bottom:24px;}
+#driverStatsTab .driver-stat-grid {grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}
+#driverStatsTab .driver-stat-card {min-height:190px;}
+#driverStatsTab .driver-stat-card .mini-viz {width:100%;}
+.driver-flag-fact {display:grid; grid-template-columns:minmax(132px,190px) minmax(0,1fr); align-items:center; gap:24px; margin:20px 0 28px; padding:22px; overflow:hidden; border:1px solid #30394b; border-radius:14px; background:linear-gradient(145deg,#171a22,#11141b); box-shadow:0 6px 18px rgba(0,0,0,.14);}
+.driver-flag-art {position:relative; width:100%; height:112px; perspective:360px;}
+.driver-flag-pole {position:absolute; z-index:1; top:0; bottom:0; left:12px; width:5px; border-radius:5px; background:linear-gradient(90deg,#8992a0,#eef2f7 48%,#747c88); box-shadow:1px 2px 4px #0008;}
+.driver-flag-cloth {position:absolute; top:10px; left:16px; width:calc(100% - 20px); height:82px; transform-origin:left center; clip-path:polygon(0 0,100% 8%,95% 50%,100% 92%,0 100%); animation:driver-flag-wave 1.35s ease-in-out infinite alternate; box-shadow:0 3px 10px #0006;}
+.driver-flag-checkered {background-color:#fff;background-image:linear-gradient(45deg,#111 25%,transparent 25%,transparent 75%,#111 75%),linear-gradient(45deg,#111 25%,transparent 25%,transparent 75%,#111 75%);background-position:0 0,8px 8px;background-size:16px 16px;}
+.driver-flag-green {background:#159447;}
+.driver-flag-yellow {background:#ffd400;}
+.driver-flag-red {background:#d62828;}
+.driver-flag-blue {background:#1769d2;}
+.driver-flag-striped {background:repeating-linear-gradient(135deg,#ffd400 0 10px,#d62828 10px 20px);}
+.driver-flag-white {background:#f4f5f7;}
+.driver-flag-black {background:#15171c;}
+.driver-flag-meatball {background:#15171c;}
+.driver-flag-meatball::after {position:absolute;top:50%;left:50%;width:34px;height:34px;border-radius:50%;background:#f47b20;content:"";transform:translate(-50%,-50%);}
+.driver-flag-diagonal {background:linear-gradient(135deg,#15171c 0 48%,#f4f5f7 48% 52%,#15171c 52%);}
+.driver-flag-copy {min-width:0;}
+.driver-flag-eyebrow {display:flex;justify-content:space-between;gap:12px;margin:0 0 6px;color:#8fa0bc;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;}
+.driver-flag-copy h2 {margin:0 0 6px;color:#fff;font-size:clamp(20px,2.5vw,27px);}
+.driver-flag-copy p {margin:0;color:#cbd5e1;line-height:1.55;}
+.driver-flag-next {margin-top:12px;padding:7px 11px;border:1px solid #3a455b;border-radius:999px;background:#1a2030;color:#dbeafe;font:inherit;font-size:12px;font-weight:700;cursor:pointer;}
+.driver-flag-next:hover,.driver-flag-next:focus-visible {border-color:#5d83e6;background:#202d4b;}
+@keyframes driver-flag-wave {from{transform:rotateY(-10deg) skewY(-2deg)}to{transform:rotateY(13deg) skewY(2deg)}}
+@media (min-width:768px) and (max-width:1023px) {
+  #driverStatsTab .driver-stat-grid {grid-template-columns:repeat(3,minmax(0,1fr));}
+}
+@media (min-width:1024px) {
+  #driverStatsTab .driver-stat-grid {grid-template-columns:repeat(5,minmax(0,1fr));}
+}
+@media (min-width:600px) {
+  #driverStatsTab .driver-heatmap-card {grid-column:span 2;}
+}
+@media (max-width:600px) {
+  .driver-flag-fact {grid-template-columns:1fr;gap:10px;padding:16px;}
+  .driver-flag-art {width:150px;height:90px;}
+  .driver-flag-cloth {height:64px;}
+}
+@media (prefers-reduced-motion:reduce) {
+  .driver-flag-cloth {animation:none;}
+}
+html.light #driverStatsTab .driver-flag-fact {background:linear-gradient(145deg,#fff,#eef2f7);border-color:#d5dbe3;}
+html.light #driverStatsTab .driver-flag-copy h2 {color:#111827 !important;}
+html.light #driverStatsTab .driver-flag-copy p {color:#374151 !important;}
+html.light #driverStatsTab .driver-flag-eyebrow {color:#526176 !important;}
+html.light #driverStatsTab .driver-flag-next {background:#fff;border-color:#b9c4d3;color:#273142;}
 .record-results-index {margin:28px 0; padding:20px; border:1px solid #252a36; border-radius:14px; background:#12151d;}
 .record-results-index h2 {margin:0 0 8px; font-size:clamp(19px,2.4vw,25px);}
 .record-results-index > p {margin:0 0 16px; color:#9aa5bd; line-height:1.5;}
@@ -1427,17 +1476,33 @@ html.light .vs-auto-item > small {
     <div id="statsContent"></div>
   </div>
   <section id="driverStatsTab" hidden>
-    <h1>Driver Statistics Dashboard</h1>
-    <p class="sub">Professional database view — built from your existing STATS_DATA.</p>
-    <div class="did-you-know" id="didYouKnowBox"><h4>Did You Know?</h4><p id="didYouKnowText">Loading insights…</p></div>
-    <div class="dashboard-grid">
-      <div class="dashboard-card"><h3>Starts by Decade</h3><div id="startsByDecadeViz" class="mini-viz"></div></div>
-      <div class="dashboard-card"><h3>Wins Timeline (Brock era to now)</h3><div id="winsTimelineViz" class="mini-viz"></div></div>
-      <div class="dashboard-card"><h3>Manufacturer History</h3><div id="manufacturerHistoryViz"></div></div>
-      <div class="dashboard-card"><h3>Bathurst Appearances Heatmap (Top 20 drivers)</h3><div id="appearancesHeatmap" class="heatmap"></div></div>
-      <div class="dashboard-card"><h3>Best Finishing Positions</h3><div id="bestFinishesViz"></div></div>
-      <div class="dashboard-card"><h3>Co-driver Network (Most frequent pairings)</h3><div id="codriverNetworkViz"></div></div>
+    <header>
+      <h1>Driver Statistics Dashboard</h1>
+      <p class="record-book-intro">Explore Bathurst driver milestones and race statistics, built from the available results data.</p>
+    </header>
+    <div class="driver-flag-fact" id="didYouKnowBox" aria-live="polite" aria-atomic="true">
+      <div class="driver-flag-art" aria-hidden="true">
+        <span class="driver-flag-pole"></span>
+        <span class="driver-flag-cloth driver-flag-checkered" id="didYouKnowFlag"></span>
+      </div>
+      <div class="driver-flag-copy">
+        <div class="driver-flag-eyebrow"><span>Australian Motorsport Flag Guide</span><span id="didYouKnowCount">1 / 10</span></div>
+        <h2 id="didYouKnowTitle">Did You Know?</h2>
+        <p id="didYouKnowText">Loading flag guide…</p>
+        <button class="driver-flag-next" id="didYouKnowNext" type="button">Next flag</button>
+      </div>
     </div>
+    <section class="record-category" aria-labelledby="driverStatsHeading">
+      <h2 id="driverStatsHeading">Bathurst Driver Statistics</h2>
+      <div class="record-category-grid driver-stat-grid">
+        <article class="record-entry driver-stat-card"><h3>Starts by Decade</h3><div id="startsByDecadeViz" class="mini-viz"></div></article>
+        <article class="record-entry driver-stat-card"><h3>Wins Timeline (Brock era to now)</h3><div id="winsTimelineViz" class="mini-viz"></div></article>
+        <article class="record-entry driver-stat-card"><h3>Manufacturer History</h3><div id="manufacturerHistoryViz"></div></article>
+        <article class="record-entry driver-stat-card driver-heatmap-card"><h3>Bathurst Appearances Heatmap (Top 20 drivers)</h3><div id="appearancesHeatmap" class="heatmap"></div></article>
+        <article class="record-entry driver-stat-card"><h3>Best Finishing Positions</h3><div id="bestFinishesViz"></div></article>
+        <article class="record-entry driver-stat-card"><h3>Co-driver Network (Most frequent pairings)</h3><div id="codriverNetworkViz"></div></article>
+      </div>
+    </section>
   </section>
 
   <section id="vsCompareTab" hidden>
@@ -5657,7 +5722,55 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
 // === Driver Stats Dashboard ===
 (function(){
+  const flagFacts = [
+    {type:'checkered', name:'Checkered flag', meaning:'Signals the end or finish of a race or session.'},
+    {type:'green', name:'Green flag', meaning:'Indicates the track is clear, the hazard has passed, or the race or session is starting.'},
+    {type:'yellow', name:'Yellow flag', meaning:'Warns of a hazard, danger, or accident ahead; overtaking is restricted. Double-waved yellow flags mean be prepared to stop.'},
+    {type:'red', name:'Red flag', meaning:'Immediately halts or suspends the race or session due to severe danger, a blocked track, or bad weather.'},
+    {type:'blue', name:'Blue flag', meaning:'Warns a driver that a faster car is approaching and they must allow an overtaking manoeuvre.'},
+    {type:'striped', name:'Yellow and red striped flag', meaning:'Indicates a slippery track surface, typically due to oil, water, or debris.'},
+    {type:'white', name:'White flag', meaning:'Alerts drivers to a slow-moving or official vehicle, such as an ambulance or safety car, directly on the track.'},
+    {type:'black', name:'Black flag', meaning:'Directs a specific driver to return immediately to the pits, usually for disqualification or rule violations.'},
+    {type:'meatball', name:'Black flag with orange disc (meatball flag)', meaning:'Warns a driver of a mechanical problem or unsafe car condition requiring a pit stop.'},
+    {type:'diagonal', name:'Black-and-white diagonal flag', meaning:'Issued for unsportsmanlike behaviour or as a warning regarding driving conduct.'}
+  ];
+  let flagIndex = 0;
+  let flagInterval = null;
+  let flagButtonBound = false;
+
+  function showFlagFact(index) {
+    const fact = flagFacts[index];
+    const flag = document.getElementById('didYouKnowFlag');
+    const title = document.getElementById('didYouKnowTitle');
+    const text = document.getElementById('didYouKnowText');
+    const count = document.getElementById('didYouKnowCount');
+    if (!fact || !flag || !title || !text || !count) return;
+    flag.className = `driver-flag-cloth driver-flag-${fact.type}`;
+    title.textContent = fact.name;
+    text.textContent = fact.meaning;
+    count.textContent = `${index + 1} / ${flagFacts.length}`;
+  }
+
+  function initFlagGuide() {
+    showFlagFact(flagIndex);
+    const next = document.getElementById('didYouKnowNext');
+    if (next && !flagButtonBound) {
+      next.addEventListener('click', () => {
+        flagIndex = (flagIndex + 1) % flagFacts.length;
+        showFlagFact(flagIndex);
+      });
+      flagButtonBound = true;
+    }
+    if (!flagInterval) {
+      flagInterval = setInterval(() => {
+        flagIndex = (flagIndex + 1) % flagFacts.length;
+        showFlagFact(flagIndex);
+      }, 7000);
+    }
+  }
+
   function buildDriverStats(){
+    initFlagGuide();
     if(!window.STATS_DATA) return;
     // Aggregate
     const drivers = {};
@@ -5749,25 +5862,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
       });
       const topPairs = Object.entries(pairs).sort((a,b)=>b[1]-a[1]).slice(0,8);
       cDiv.innerHTML = topPairs.map(([pair,count])=>`<div class="manufacturer-bar"><span class="bar-label" style="width:200px;">${pair}</span><span style="font-size:11px;">${count} races together</span></div>`).join('');
-    }
-    // Did you know
-    const dBox = document.getElementById('didYouKnowText');
-    if(dBox){
-      const insights=[];
-      const fourDecadeDrivers = Object.entries(drivers).filter(([_,d])=>{ const yrs=Array.from(d.years); return Math.max(...yrs)-Math.min(...yrs)>=30; }).map(x=>x[0]).slice(0,3);
-      if(fourDecadeDrivers.length) insights.push(`${fourDecadeDrivers[0]} competed in Bathurst across four decades.`);
-      const makes = Object.entries(manufacturers);
-      if(makes.length){
-        const topMake = makes.sort((a,b)=>b[1]-a[1])[0];
-        insights.push(`${topMake[0]} has ${topMake[1]} Bathurst wins — the most in the archive.`);
-      }
-      const brockWins = drivers['Peter Brock']?.wins || 9;
-      insights.push(`Peter Brock's ${brockWins} wins remain the benchmark — no driver has matched it in 66 races.`);
-      insights.push(`Ford's longest winning drought was broken in the Group A era — explore manufacturer history to see when.`);
-      dBox.textContent = insights[Math.floor(Math.random()*insights.length)];
-      setInterval(()=>{
-        dBox.textContent = insights[Math.floor(Math.random()*insights.length)];
-      }, 6000);
     }
   }
   // Build when tab opened
