@@ -134,6 +134,7 @@
 #driverStatsTab .driver-directory-card[hidden] {display:none;}
 #driverStatsTab .driver-directory-empty[hidden] {display:none;}
 #driverStatsTab #appearancesHeatmap {min-width:0; max-width:100%; overflow-x:auto;}
+#driverStatsTab .driver-heatmap-card {grid-column:1/-1;}
 #driverStatsTab .driver-codriver-card {grid-column:1/-1;}
 .driver-stat-note {margin:0 0 12px;color:#9aa5bd;font-size:12px;line-height:1.5;}
 .driver-codriver-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px;}
@@ -181,9 +182,6 @@ html.light #driverStatsTab .driver-heatmap-cell.has-appearance {border-color:#25
 }
 @media (min-width:1024px) {
   #driverStatsTab .driver-stat-grid {grid-template-columns:repeat(5,minmax(0,1fr));}
-}
-@media (min-width:600px) {
-  #driverStatsTab .driver-heatmap-card {grid-column:span 2;}
 }
 @media (max-width:600px) {
   .did-you-know {padding:15px;}
@@ -1542,9 +1540,9 @@ html.light .vs-auto-item > small {
       </section>
       <div class="record-category-grid driver-stat-grid">
         <article class="record-entry driver-stat-card"><h3>Recorded Car Entries by Decade</h3><p class="driver-stat-note">One result row per car. Available detailed entries begin in 1963.</p><div id="startsByDecadeViz" class="mini-viz"></div></article>
+        <article class="record-entry driver-stat-card"><h3>Best Finishing Positions</h3><div id="bestFinishesViz"></div></article>
         <article class="record-entry driver-stat-card"><h3>Manufacturer History</h3><div id="manufacturerHistoryViz"></div></article>
         <article class="record-entry driver-stat-card driver-heatmap-card"><h3>Bathurst Appearances Heatmap (Top 20 drivers, 1963–2025)</h3><div class="driver-heatmap-legend" aria-label="Heatmap legend"><span><i class="driver-heatmap-swatch has-appearance" aria-hidden="true"></i>Recorded Bathurst appearance</span><span><i class="driver-heatmap-swatch" aria-hidden="true"></i>No recorded appearance</span></div><div id="appearancesHeatmap" class="heatmap" role="grid" aria-label="Driver Bathurst appearances by year"></div></article>
-        <article class="record-entry driver-stat-card"><h3>Best Finishing Positions</h3><div id="bestFinishesViz"></div></article>
         <article class="record-entry driver-stat-card driver-codriver-card"><h3>Most Frequent Co-driver Pairings</h3><div id="codriverNetworkViz"></div></article>
       </div>
     </section>
