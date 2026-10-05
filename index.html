@@ -5127,6 +5127,13 @@ restoreRememberedSpreadsheetDirectory();
   // --- Footer dynamic year ---
   const footerYear = document.getElementById('footerYear');
   if(footerYear) footerYear.textContent = new Date().getFullYear();
+  const footerLastUpdated = document.getElementById('footerLastUpdated');
+  if(footerLastUpdated){
+    const modified = new Date(document.lastModified);
+    if(!Number.isNaN(modified.getTime())){
+      footerLastUpdated.textContent = 'Last updated: ' + modified.toLocaleDateString('en-AU', { day:'numeric', month:'long', year:'numeric' });
+    }
+  }
 })();
 </script>
   
@@ -5160,6 +5167,13 @@ document.addEventListener('dragstart', e=>{ if(e.target.tagName==='IMG' && e.tar
 document.addEventListener('DOMContentLoaded', ()=>{
   const y = document.getElementById('footerYear');
   if(y) y.textContent = new Date().getFullYear();
+  const lastUpdated = document.getElementById('footerLastUpdated');
+  if(lastUpdated){
+    const modified = new Date(document.lastModified);
+    if(!Number.isNaN(modified.getTime())){
+      lastUpdated.textContent = 'Last updated: ' + modified.toLocaleDateString('en-AU', { day:'numeric', month:'long', year:'numeric' });
+    }
+  }
 });
 </script>
 
@@ -5172,6 +5186,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     .footer-bottom { max-width:1120px; margin:0 auto; padding:18px 20px 28px; border-top:1px solid #141821; text-align:center; font-size:11.5px; line-height:1.6; color:#6b768f; }
     .footer-bottom a { color:#9aa5bd; text-decoration:underline; text-underline-offset:3px; }
     .footer-bottom a:hover { color:#cbd5e1; }
+    .footer-updated { flex-basis:100%; margin-top:8px; color:#8b93a8; text-align:center; }
     .policy-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.85); backdrop-filter:blur(6px); z-index:9999; padding:20px; overflow:auto; }
     .policy-modal.open { display:block; }
     .policy-modal-inner { max-width:740px; margin:40px auto; background:#12151d; border:1px solid #2a2f40; border-radius:20px; padding:28px; color:#cbd5e1; line-height:1.7; }
@@ -5561,11 +5576,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
 
   <div class="footer-bottom">
     <div>© <span id="footerYear">2026</span> Peter Evans / Evans Motorsport. Race results are historical facts; archive research and presentation are protected.</div>
+    <div id="footerLastUpdated" class="footer-updated">Last updated: 5 October 2026</div>
     <div style="margin-top:6px;">
       <a href="#" data-modal="privacyModal">Privacy Policy</a> · 
       <a href="#" data-modal="termsModal">Terms of Service</a> · 
-      <a href="#" data-modal="dataModal">Data & Copyright</a> · 
-      bathurstracehistory.netlify.app
+      <a href="#" data-modal="dataModal">Data & Copyright</a>
     </div>
   </div>
 </footer>
@@ -5675,7 +5690,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
     <p>Some early years have incomplete lap records. These are labelled as Researching (partial data) or Results Only (no lap chart yet). If you have primary source material that can improve accuracy, please email <a href="mailto:feedback.evansmotorsport@gmail.com">feedback.evansmotorsport@gmail.com</a>. Every correction is verified before inclusion.</p>
 
     <h3>5. How to attribute</h3>
-    <p>When quoting small extracts: "Source: Peter Evans / Evans Motorsport — Bathurst Race History Archive, bathurstracehistory.netlify.app — [Year] Bathurst 500/1000"</p>
+    <p>When quoting small extracts: "Source: Peter Evans / Evans Motorsport — Bathurst Race History Archive, https://evanspj70-tech.github.io/Bathurst-archive/ — [Year] Bathurst 500/1000"</p>
 
     <button class="policy-close" data-close>Close</button>
   </div>
