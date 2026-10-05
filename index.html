@@ -118,6 +118,21 @@
 #driverStatsTab .driver-stat-grid {grid-template-columns:repeat(auto-fill,minmax(220px,1fr));}
 #driverStatsTab .driver-stat-card {min-height:190px;}
 #driverStatsTab .driver-stat-card .mini-viz {width:100%;}
+#driverStatsTab .driver-directory {margin:24px 0 30px;}
+#driverStatsTab .driver-directory-heading {margin:0 0 14px;font-size:clamp(18px,2.2vw,22px);}
+#driverStatsTab .driver-directory-search {position:relative;margin:0 0 8px;}
+#driverStatsTab .driver-directory-search svg {position:absolute;left:16px;top:50%;width:19px;height:19px;transform:translateY(-50%);color:#9aa5bd;pointer-events:none;}
+#driverStatsTab .driver-directory-search input {box-sizing:border-box;width:100%;min-height:54px;padding:14px 16px 14px 46px;border:1px solid #30394b;border-radius:12px;background:#12151d;color:#fff;font:inherit;font-size:15px;box-shadow:0 6px 18px rgba(0,0,0,.14);}
+#driverStatsTab .driver-directory-search input:focus {outline:none;border-color:#2a5bd7;box-shadow:0 0 0 3px rgba(42,91,215,.2);}
+#driverStatsTab .driver-directory-status {min-height:18px;margin:8px 0 12px;color:#9aa5bd;font-size:12px;}
+#driverStatsTab .driver-directory-empty {margin:10px 0;padding:14px 16px;border:1px solid #30394b;border-radius:10px;background:#12151d;color:#cbd5e1;font-size:14px;}
+#driverStatsTab .driver-directory-grid {display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:12px;}
+#driverStatsTab .driver-directory-card {min-width:0;padding:15px;border:1px solid #252a36;border-radius:12px;background:linear-gradient(145deg,#171a22,#11141b);box-shadow:0 6px 18px rgba(0,0,0,.12);}
+#driverStatsTab .driver-directory-card h3 {margin:0;color:#fff;font-size:15px;line-height:1.35;overflow-wrap:anywhere;}
+#driverStatsTab .driver-directory-card p {margin:7px 0 0;color:#9aa5bd;font-size:12px;line-height:1.5;overflow-wrap:anywhere;}
+#driverStatsTab .driver-directory-card .driver-directory-manufacturers {color:#cbd5e1;}
+#driverStatsTab .driver-directory-card[hidden] {display:none;}
+#driverStatsTab .driver-directory-empty[hidden] {display:none;}
 #driverStatsTab #appearancesHeatmap {min-width:0; max-width:100%; overflow-x:auto;}
 #driverStatsTab .driver-wins-card,
 #driverStatsTab .driver-codriver-card {grid-column:1/-1;}
@@ -145,7 +160,15 @@
 .driver-heatmap-cell.has-appearance {border-color:#2563eb;background:#3b82f6;}
 html.light #driverStatsTab .driver-stat-note,
 html.light #driverStatsTab .driver-heatmap-legend,
-html.light #driverStatsTab .driver-heatmap-name {color:#526176;}
+html.light #driverStatsTab .driver-heatmap-name,
+html.light #driverStatsTab .driver-directory-status {color:#526176;}
+html.light #driverStatsTab .driver-directory-search input {border-color:#d5dbe3;background:#fff;color:#111827;}
+html.light #driverStatsTab .driver-directory-search svg {color:#526176;}
+html.light #driverStatsTab .driver-directory-empty {border-color:#d5dbe3;background:#fff;color:#374151;}
+html.light #driverStatsTab .driver-directory-card {border-color:#d5dbe3;background:linear-gradient(145deg,#fff,#f3f5f8);}
+html.light #driverStatsTab .driver-directory-card h3 {color:#111827;}
+html.light #driverStatsTab .driver-directory-card p {color:#526176;}
+html.light #driverStatsTab .driver-directory-card .driver-directory-manufacturers {color:#374151;}
 html.light #driverStatsTab .driver-wins-decade h4,
 html.light #driverStatsTab .driver-win-entry strong,
 html.light #driverStatsTab .driver-codriver-names {color:#111827;}
@@ -157,6 +180,7 @@ html.light #driverStatsTab .driver-heatmap-cell {border-color:#d5dbe3;background
 html.light #driverStatsTab .driver-heatmap-cell.has-appearance {border-color:#2563eb;background:#3b82f6;}
 @media (max-width:600px) {
   .driver-codriver-list {grid-template-columns:1fr;}
+  #driverStatsTab .driver-directory-search input {min-height:52px;font-size:16px;}
 }
 .did-you-know {margin:20px 0 28px;padding:18px 20px;border:1px solid #30394b;border-left:4px solid #2a5bd7;border-radius:12px;background:linear-gradient(145deg,#171a22,#11141b);box-shadow:0 6px 18px rgba(0,0,0,.14);}
 .did-you-know-heading {display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;}
@@ -1519,6 +1543,16 @@ html.light .vs-auto-item > small {
     </div>
     <section class="record-category" aria-labelledby="driverStatsHeading">
       <h2 id="driverStatsHeading">Bathurst Driver Statistics</h2>
+      <section class="driver-directory" aria-labelledby="driverDirectoryHeading">
+        <h3 class="driver-directory-heading" id="driverDirectoryHeading">Browse Bathurst Drivers</h3>
+        <label class="driver-directory-search" for="driverDirectorySearch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+          <input id="driverDirectorySearch" type="search" placeholder="Search Drivers, Teams, Manufacturers or Years..." aria-label="Search Bathurst drivers by driver, co-driver, team, manufacturer or year" autocomplete="off">
+        </label>
+        <p class="driver-directory-status" id="driverDirectoryStatus" role="status" aria-live="polite"></p>
+        <p class="driver-directory-empty" id="driverDirectoryEmpty" hidden>No matching Bathurst Archive records found.</p>
+        <div class="driver-directory-grid" id="driverDirectoryGrid"></div>
+      </section>
       <div class="record-category-grid driver-stat-grid">
         <article class="record-entry driver-stat-card"><h3>Recorded Car Entries by Decade</h3><p class="driver-stat-note">One result row per car. Available detailed entries begin in 1963.</p><div id="startsByDecadeViz" class="mini-viz"></div></article>
         <article class="record-entry driver-stat-card driver-wins-card"><h3>Bathurst Winners Timeline (1972–2025)</h3><div id="winsTimelineViz"></div></article>
@@ -5786,15 +5820,90 @@ document.addEventListener('DOMContentLoaded', ()=>{
       (e.drivers||[]).forEach(d=>{
         const name = (d.name||'').trim();
         if(!name) return;
-        if(!drivers[name]) drivers[name]={starts:0,wins:0,podiums:0,best:99,years:new Set(),makes:new Set()};
-        drivers[name].starts++;
-        drivers[name].years.add(year);
-        drivers[name].makes.add(e.make||'Other');
-        if(e.officialPos===1) drivers[name].wins++;
-        if(e.officialPos<=3) drivers[name].podiums++;
-        if(e.officialPos>0 && e.officialPos<drivers[name].best) drivers[name].best=e.officialPos;
+        if(!drivers[name]) drivers[name]={starts:0,wins:0,podiums:0,best:99,years:new Set(),makes:new Set(),coDrivers:new Set(),teams:new Set()};
+        const driver = drivers[name];
+        driver.starts++;
+        driver.years.add(year);
+        if (e.make) driver.makes.add(String(e.make).trim());
+        entryDrivers.forEach(coDriver => {
+          if (coDriver.toLowerCase() !== name.toLowerCase()) driver.coDrivers.add(coDriver);
+        });
+        const teamValues = [
+          e.team, e.entrant, e.teamName, e.entrantName,
+          ...(e.extraFields||[])
+            .filter(field => /^(?:team(?: name)?|entrant(?: name)?)$/i.test(String(field.label||'').trim()))
+            .map(field => field.value)
+        ];
+        teamValues.forEach(value => {
+          const team = String(value||'').trim();
+          if (team && !/^(?:-+|n\/a|unknown)$/i.test(team)) driver.teams.add(team);
+        });
+        if(e.officialPos===1) driver.wins++;
+        if(e.officialPos<=3) driver.podiums++;
+        if(e.officialPos>0 && e.officialPos<driver.best) driver.best=e.officialPos;
       });
     });
+
+    const directoryGrid = document.getElementById('driverDirectoryGrid');
+    const directorySearch = document.getElementById('driverDirectorySearch');
+    const directoryStatus = document.getElementById('driverDirectoryStatus');
+    const directoryEmpty = document.getElementById('driverDirectoryEmpty');
+    if (directoryGrid && directorySearch && directoryStatus && directoryEmpty) {
+      const driverCards = Object.entries(drivers)
+        .sort(([nameA, driverA], [nameB, driverB]) =>
+          driverB.starts - driverA.starts || nameA.localeCompare(nameB)
+        )
+        .map(([name, driver]) => {
+          const years = Array.from(driver.years).sort((a,b)=>a-b);
+          const manufacturers = Array.from(driver.makes).filter(Boolean).sort();
+          const card = document.createElement('article');
+          card.className = 'driver-directory-card';
+          const heading = document.createElement('h3');
+          heading.textContent = name;
+          const summary = document.createElement('p');
+          summary.textContent = `${driver.starts.toLocaleString()} Bathurst ${driver.starts === 1 ? 'start' : 'starts'} · ${years[0]}–${years[years.length - 1]}`;
+          card.append(heading, summary);
+          if (manufacturers.length) {
+            const manufacturerLine = document.createElement('p');
+            manufacturerLine.className = 'driver-directory-manufacturers';
+            const displayedManufacturers = manufacturers.slice(0, 3);
+            manufacturerLine.textContent = `Manufacturers: ${displayedManufacturers.join(', ')}${manufacturers.length > displayedManufacturers.length ? ` +${manufacturers.length - displayedManufacturers.length} more` : ''}`;
+            card.appendChild(manufacturerLine);
+          }
+          const searchTerms = [
+            name,
+            ...driver.coDrivers,
+            ...driver.teams,
+            ...manufacturers,
+            ...years
+          ].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+          card.dataset.searchText = searchTerms;
+          return card;
+        });
+      const directoryFragment = document.createDocumentFragment();
+      driverCards.forEach(card => directoryFragment.appendChild(card));
+      directoryGrid.replaceChildren(directoryFragment);
+
+      const filterDriverCards = () => {
+        const query = directorySearch.value.trim().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase();
+        const terms = query.split(/\s+/).filter(Boolean);
+        let visibleCount = 0;
+        driverCards.forEach(card => {
+          const matches = terms.every(term => card.dataset.searchText.includes(term));
+          card.hidden = !matches;
+          if (matches) visibleCount++;
+        });
+        directoryEmpty.hidden = visibleCount > 0;
+        directoryStatus.textContent = terms.length
+          ? `${visibleCount.toLocaleString()} matching ${visibleCount === 1 ? 'driver' : 'drivers'}.`
+          : `${visibleCount.toLocaleString()} Bathurst ${visibleCount === 1 ? 'driver' : 'drivers'}.`;
+      };
+      if (directorySearch.dataset.searchBound !== 'true') {
+        directorySearch.addEventListener('input', filterDriverCards);
+        directorySearch.dataset.searchBound = 'true';
+      }
+      filterDriverCards();
+    }
 
     // Starts by decade viz
     const sDiv = document.getElementById('startsByDecadeViz');
