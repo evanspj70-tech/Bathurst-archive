@@ -56,6 +56,10 @@
 .timeline-decade:nth-child(n + 5) { border-bottom:none; }
 .timeline-decade-label { font-size:11px; font-weight:800; letter-spacing:.08em; color:#6b768f; padding:2px 4px; }
 .timeline-decade-years { display:flex; gap:6px; flex-wrap:wrap; max-width:none; }
+.timeline-legend {display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:9px;color:#9aa5bd;font-size:12px;line-height:1.4;}
+.timeline-legend-year {display:inline-flex;align-items:center;justify-content:center;min-width:38px;padding:4px 8px;border:1px solid #2a5bd7;border-radius:999px;background:#171a22;color:#cbd5e1;font-size:11px;font-weight:700;line-height:1;}
+html.light .timeline-legend {color:#526176;}
+html.light .timeline-legend-year {background:#fff;color:#374151;}
 @media (max-width:900px){
   .timeline-strip {grid-template-columns:repeat(2, minmax(0, 1fr));}
   .timeline-decade:nth-child(3n) {border-right:1px solid #1e2332;}
@@ -1452,6 +1456,10 @@ html.light .vs-auto-item > small {
     <input id="globalSearch" type="search" placeholder="Search driver, car #, team, year... e.g. Brock, #05, Holden" aria-label="Search archive" autocomplete="off">
     <div id="globalSearchResults" role="listbox"></div>
     <div class="timeline-strip" id="timelineStrip" aria-label="Year timeline"></div>
+    <div class="timeline-legend" aria-label="Year timeline legend">
+      <span class="timeline-legend-year" aria-hidden="true">2025</span>
+      <span>Blue oval means a lap chart is available for that year.</span>
+    </div>
   </div>
 
   </div>
