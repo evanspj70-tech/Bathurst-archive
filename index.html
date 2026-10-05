@@ -5809,6 +5809,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
       if (!Number.isInteger(year)) return;
       const dec = Math.floor(year/10)*10;
       startsByDecade[dec] = (startsByDecade[dec]||0)+1;
+      const entryDrivers = (e.drivers||[]).map(driver => String(driver.name||'').trim()).filter(Boolean);
       if(e.officialPos===1){
         if (year >= 1972 && (!e.raceCategory || e.raceCategory === 'main')) {
           const eventKey = `${e.yearKey || year}:${e.raceCategory || 'main'}`;
