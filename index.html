@@ -20,6 +20,61 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 
 <style id="enhancements-css">
+
+/* --- Compact 5x2 grid nav - added for 10-button layout --- */
+.tabs {
+  max-width: 100%;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-flow: column;
+}
+.tabs .tabbtn {
+  padding: 8px 10px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: .04em !important;
+  min-height: 38px;
+  line-height: 1.2;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+}
+.tabs .tabbtn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: #e53935;
+  opacity: .9;
+}
+.tabs .tabbtn[data-grid-number="2"]::before { background: #2a5bd7; }
+.tabs .tabbtn[data-grid-number="3"]::before { background: #2a5bd7; }
+.tabs .tabbtn[data-grid-number="4"]::before { background: #2a5bd7; }
+.tabs .tabbtn[data-grid-number="5"]::before { background: #ff9800; }
+.tabs .tabbtn[data-grid-number="6"]::before { background: #ff9800; }
+.tabs .tabbtn[data-grid-number="7"]::before { background: #4caf50; }
+.tabs .tabbtn[data-grid-number="8"]::before { background: #4caf50; }
+.tabs .tabbtn[data-grid-number="9"]::before { background: #9c27b0; }
+.tabs .tabbtn[data-grid-number="10"]::before { background: #555; }
+.tabs .tabbtn.active {
+  transform: none !important;
+  box-shadow: 0 0 0 2px rgba(42,91,215,.35) !important;
+}
+.placeholder-tab {
+  pointer-events: none;
+}
+@media (max-width: 900px) {
+  .tabs { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; grid-auto-flow: row !important; grid-template-rows: auto !important; }
+}
+@media (max-width: 600px) {
+  .tabs { grid-template-columns: 1fr 1fr !important; grid-auto-flow: row !important; }
+  .tabs .tabbtn { font-size: 10px !important; padding: 7px 8px !important; }
+}
+
 /* --- UX Enhancements v3 - additive only, does not reset base fonts/colors --- */
 .head {flex-wrap:wrap !important;}
 .year-nav {display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
@@ -1224,10 +1279,7 @@ html.light .vs-auto-item > small {
 </head>
 <body>
 
-    <!-- Theme Toggle -->
-    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
-        <span class="icon-dark">🌙</span> Dark / Light <span class="icon-light">☀️</span>
-    </button>
+    <!-- Theme Toggle removed per user request -->
 <!-- PRIVATE ACCESS GATE — stops casual public access, free, no Netlify Pro needed -->
 <style id="gate-css">
   #privateGate { position:fixed; inset:0; background:#0a0c10; z-index:99999; display:flex; align-items:center; justify-content:center; padding:20px; }
@@ -1282,7 +1334,7 @@ html.light .vs-auto-item > small {
 </script>
 <!-- END PRIVATE GATE -->
 
-<a href="#archiveApp" class="skip-link">Skip to main content</a>
+<!-- Skip link removed per user request -->
 <div class="data-loading-progress" id="dataLoadingProgress" hidden><div class="data-loading-progress-bar" id="dataLoadingProgressBar"></div></div>
 
 <div class="wrap" id="archiveApp" aria-busy="true">
@@ -1290,15 +1342,17 @@ html.light .vs-auto-item > small {
     <span class="loading-spinner" aria-hidden="true"></span>
     <span>Parsing race data and preparing the archive…</span>
   </div>
-  <div class="tabs">
-    <button class="tabbtn active" data-tab="home" data-grid-number="1" aria-controls="homeTab" aria-selected="true">Home</button>
-    <button class="tabbtn" data-tab="stats" data-grid-number="2" aria-controls="statsTab" aria-selected="false">The Record Book</button>
-    <button class="tabbtn" data-tab="earlyResults" data-grid-number="3" aria-controls="earlyResultsTab" aria-selected="false">Race Results 1960-1962</button>
-    <button class="tabbtn" data-tab="chart" data-grid-number="4" aria-controls="chartTab" aria-selected="false">Race Results from 1963</button>
-    <button class="tabbtn" data-tab="driverStats" data-grid-number="5" aria-controls="driverStatsTab" aria-selected="false">Driver Stats</button>
-    <button class="tabbtn" data-tab="vsCompare" data-grid-number="6" aria-controls="vsCompareTab" aria-selected="false">Driver vs Driver</button>
-    <button class="tabbtn cover-gallery-tab" data-tab="programmeCovers" data-grid-number="7" aria-controls="programmeCoversTab" aria-selected="false">Programme Covers</button>
-    <button class="tabbtn" data-tab="timingData" data-grid-number="8" aria-controls="timingData" aria-selected="false">Timing Data</button>
+  <div class="tabs" style="display:grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: repeat(2, auto); grid-auto-flow: column; gap:8px;">
+    <button class="tabbtn active" data-tab="home" data-grid-number="1" aria-controls="homeTab" aria-selected="true">1 Home</button>
+    <button class="tabbtn" data-tab="stats" data-grid-number="2" aria-controls="statsTab" aria-selected="false">2 The Record Book</button>
+    <button class="tabbtn" data-tab="earlyResults" data-grid-number="3" aria-controls="earlyResultsTab" aria-selected="false">3 Race Results 1960-1962</button>
+    <button class="tabbtn" data-tab="chart" data-grid-number="4" aria-controls="chartTab" aria-selected="false">4 Race Results from 1963</button>
+    <button class="tabbtn" data-tab="driverStats" data-grid-number="5" aria-controls="driverStatsTab" aria-selected="false">5 Driver Stats</button>
+    <button class="tabbtn" data-tab="vsCompare" data-grid-number="6" aria-controls="vsCompareTab" aria-selected="false">6 Driver vs Driver</button>
+    <button class="tabbtn" data-tab="timingData" data-grid-number="7" aria-controls="timingData" aria-selected="false">7 Timing Data</button>
+    <button class="tabbtn" data-tab="weather" data-grid-number="8" aria-controls="weatherTab" aria-selected="false">8 Weather Reports</button>
+    <button class="tabbtn cover-gallery-tab" data-tab="programmeCovers" data-grid-number="9" aria-controls="programmeCoversTab" aria-selected="false">9 Programme Covers</button>
+    <button class="tabbtn placeholder-tab" data-tab="placeholder" data-grid-number="10" aria-controls="placeholderTab" aria-selected="false" style="opacity:.5; cursor:default; border-style:dashed;">10 Coming Soon</button>
   </div>
 </div>
   <section id="homeTab" class="home-tab">
@@ -1576,14 +1630,13 @@ html.light .vs-auto-item > small {
     </section>
   </section>
 
-  <section id="vsCompareTab" class="tabcontent" hidden>
+  <section id="vsCompareTab" class="tabcontent" hidden style="display: none;">
       <h1>Driver vs Driver Comparison</h1>
       <label class="sr-only" for="vsPopularMatchup">Popular matchups</label>
       <select id="vsPopularMatchup" class="vs-popular-matchup" aria-label="Popular matchups">
         <option value="">Popular matchups</option>
       </select>
-      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-      </div>
+    </div>
     <p class="sub">Compare Bathurst results, podiums, car numbers, manufacturers, race laps and known family connections.</p>
     <div style="display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; position:relative;">
       <div style="flex:1; min-width:200px; position:relative;">
@@ -1603,6 +1656,11 @@ html.light .vs-auto-item > small {
   <!-- Ensure the src matches your actual file name exactly -->
   <iframe src="timing_data.html" width="100%" height="800px" style="border: none;"></iframe>
 </section>
+
+  <section id="placeholderTab" class="tabcontent" hidden style="display:none; padding:40px; text-align:center; color:#9aa5bd;"><h2>Coming Soon</h2><p>This section is reserved for future content.</p></section>
+  <section id="weatherTab" class="tabcontent" hidden style="display: none;">
+    <iframe id="weatherFrame" src="bathurst_weather.html" width="100%" height="900px" style="border: none;"></iframe>
+  </section>
 
   <section id="earlyResultsTab" class="tabcontent" hidden>
       <div>
@@ -2569,6 +2627,7 @@ function render(yearKey) {
     }
     tabBtns.forEach(btn => {
       btn.addEventListener('click', () => {
+        if (btn.classList.contains('placeholder-tab') || btn.dataset.tab === 'placeholder') return;
         document.querySelectorAll('.tabbtn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         const activeTab = btn.dataset.tab;
@@ -2583,6 +2642,7 @@ function render(yearKey) {
         const driverStatsTab = document.getElementById('driverStatsTab');
         const vsTab = document.getElementById('vsCompareTab');
         const timingTab = document.getElementById('timingData');
+        const weatherTab = document.getElementById('weatherTab');
         
         if (homeTab) { homeTab.hidden = activeTab !== 'home'; homeTab.style.display = activeTab === 'home' ? '' : 'none'; }
         if (progTab) { progTab.hidden = activeTab !== 'programmeCovers'; progTab.style.display = activeTab === 'programmeCovers' ? '' : 'none'; }
@@ -2592,6 +2652,7 @@ function render(yearKey) {
         if (driverStatsTab) { driverStatsTab.hidden = activeTab !== 'driverStats'; driverStatsTab.style.display = activeTab === 'driverStats' ? '' : 'none'; }
         if (vsTab) { vsTab.hidden = activeTab !== 'vsCompare'; vsTab.style.display = activeTab === 'vsCompare' ? '' : 'none'; }
         if (timingTab) { timingTab.hidden = activeTab !== 'timingData'; timingTab.style.display = activeTab === 'timingData' ? '' : 'none'; }
+        if (weatherTab) { weatherTab.hidden = activeTab !== 'weather'; weatherTab.style.display = activeTab === 'weather' ? '' : 'none'; }
         
         const isStats = activeTab === 'stats';
         if (isStats && typeof statsBuilt !== 'undefined' && !statsBuilt && typeof buildStats === 'function') { 
@@ -2611,6 +2672,10 @@ function render(yearKey) {
           else if (activeTab === 'chart') history.replaceState(null, '', '#chart');
           else if (activeTab === 'stats') history.replaceState(null, '', '#records');
           else if (activeTab === 'earlyResults') history.replaceState(null, '', '#early-results');
+          else if (activeTab === 'weather') history.replaceState(null, '', '#weather');
+          else if (activeTab === 'vsCompare') history.replaceState(null, '', '#vs-compare');
+          else if (activeTab === 'timingData') history.replaceState(null, '', '#timing');
+          else if (activeTab === 'driverStats') history.replaceState(null, '', '#driver-stats');
         } catch(e) {}
       });
     });
