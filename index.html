@@ -1576,13 +1576,14 @@ html.light .vs-auto-item > small {
     </section>
   </section>
 
-  <section id="vsCompareTab" class="tabcontent" hidden style="display: none;">
+  <section id="vsCompareTab" class="tabcontent" hidden>
       <h1>Driver vs Driver Comparison</h1>
       <label class="sr-only" for="vsPopularMatchup">Popular matchups</label>
       <select id="vsPopularMatchup" class="vs-popular-matchup" aria-label="Popular matchups">
         <option value="">Popular matchups</option>
       </select>
-    </div>
+      <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+      </div>
     <p class="sub">Compare Bathurst results, podiums, car numbers, manufacturers, race laps and known family connections.</p>
     <div style="display:flex; gap:12px; flex-wrap:wrap; margin:16px 0; position:relative;">
       <div style="flex:1; min-width:200px; position:relative;">
@@ -2583,20 +2584,14 @@ function render(yearKey) {
         const vsTab = document.getElementById('vsCompareTab');
         const timingTab = document.getElementById('timingData');
         
-        if (homeTab) homeTab.hidden = activeTab !== 'home';
-        if (progTab) progTab.hidden = activeTab !== 'programmeCovers';
-        if (chartTab) chartTab.style.display = activeTab === 'chart' ? '' : 'none';
-        if (statsTab) statsTab.style.display = activeTab === 'stats' ? '' : 'none';
-        if (earlyTab) earlyTab.hidden = activeTab !== 'earlyResults';
-        if (driverStatsTab) driverStatsTab.hidden = activeTab !== 'driverStats';
-        if (vsTab) vsTab.hidden = activeTab !== 'vsCompare';
-        if (timingTab) timingTab.hidden = activeTab !== 'timingData';
-        // Also handle style.display fallback for tabs that use it
-        if (timingTab && timingTab.style) {
-          // ensure hidden attribute takes precedence, but sync display for older sections
-          if (activeTab === 'timingData') timingTab.style.display = '';
-          else if (timingTab.hidden) timingTab.style.display = 'none';
-        }
+        if (homeTab) { homeTab.hidden = activeTab !== 'home'; homeTab.style.display = activeTab === 'home' ? '' : 'none'; }
+        if (progTab) { progTab.hidden = activeTab !== 'programmeCovers'; progTab.style.display = activeTab === 'programmeCovers' ? '' : 'none'; }
+        if (chartTab) { chartTab.hidden = activeTab !== 'chart'; chartTab.style.display = activeTab === 'chart' ? '' : 'none'; }
+        if (statsTab) { statsTab.hidden = activeTab !== 'stats'; statsTab.style.display = activeTab === 'stats' ? '' : 'none'; }
+        if (earlyTab) { earlyTab.hidden = activeTab !== 'earlyResults'; earlyTab.style.display = activeTab === 'earlyResults' ? '' : 'none'; }
+        if (driverStatsTab) { driverStatsTab.hidden = activeTab !== 'driverStats'; driverStatsTab.style.display = activeTab === 'driverStats' ? '' : 'none'; }
+        if (vsTab) { vsTab.hidden = activeTab !== 'vsCompare'; vsTab.style.display = activeTab === 'vsCompare' ? '' : 'none'; }
+        if (timingTab) { timingTab.hidden = activeTab !== 'timingData'; timingTab.style.display = activeTab === 'timingData' ? '' : 'none'; }
         
         const isStats = activeTab === 'stats';
         if (isStats && typeof statsBuilt !== 'undefined' && !statsBuilt && typeof buildStats === 'function') { 
