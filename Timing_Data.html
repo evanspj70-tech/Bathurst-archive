@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#121212">
+    <title>Bathurst 1000 Research Archive</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --panel-bg: #1a1a1a;
+            --border-color: #333;
+            --border-light: #444;
+            --accent-red: #e53935; /* Bathurst Red */
+            --accent-red-hover: #ef5350;
+            --accent-red-faded: rgba(229, 57, 53, 0.15);
+            --text-main: #f0f0f0;
+            --text-muted: #aaa;
+            --shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            min-width: 320px;
+            line-height: 1.5;
+        }
+
+        button, input { font: inherit; }
+        button { color: inherit; }
+
+        .container {
+            width: min(1700px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        /* Hero Header */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            margin: 24px 0 18px;
+            padding: clamp(24px, 4vw, 42px);
+            border: 1px solid var(--border-color);
+            border-bottom: 3px solid var(--accent-red);
+            border-radius: 12px;
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .eyebrow, .stat-label {
+            color: var(--accent-red);
+            font-size: 11px;
+            font-weight: 750;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            margin: 8px 0 5px;
+            font-size: clamp(28px, 4vw, 44px);
+            line-height: 1.1;
+            letter-spacing: -.035em;
+            color: var(--text-main);
+        }
+
+        .hero p {
+            max-width: 680px;
+            margin: 10px auto 0;
+            color: var(--text-muted);
+        }
+
+        /* Shared Panel Styles */
+        .upload-card, .stat, .nav, .viewer {
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            box-shadow: var(--shadow);
+            border-radius: 12px;
+        }
+
+        /* Upload Area */
+        .upload-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 18px;
+            padding: 17px 20px;
+        }
+
+        .upload-copy strong { display: block; color: var(--text-main); }
+        .upload-copy span, .status { color: var(--text-muted); font-size: 13px; }
+        .status { margin-top: 3px; }
+
+        /* Primary Button (Bathurst Red) */
+        .primary-button, .secondary-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 42px;
+            padding: 0 16px;
+            border: 1px solid var(--accent-red);
+            border-radius: 8px;
+            background: var(--accent-red);
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .primary-button:hover { 
+            background: var(--accent-red-hover); 
+            border-color: var(--accent-red-hover);
+            transform: translateY(-1px); 
+        }
+        
+        #folderInput { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+
+        /* Stats Row */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .stat {
+            min-height: 92px;
+            padding: 17px 19px;
+            text-align: center;
+        }
+
+        .stat-value { margin-top: 3px; font-size: 28px; font-weight: 800; letter-spacing: -.03em; color: var(--text-main); }
+
+        /* Search Box */
+        .search-box {
+            width: 100%;
+            min-height: 50px;
+            margin-bottom: 18px;
+            padding: 0 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            background: var(--panel-bg);
+            color: var(--text-main);
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus { border-color: var(--accent-red); }
+        .search-box::placeholder { color: var(--text-muted); }
+
+        /* Validation Toggle */
+        .validation-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: -5px 0 18px;
+            padding: 9px 13px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--panel-bg);
+            color: var(--text-main);
+            font-size: 13px;
+            font-weight: 650;
+            cursor: pointer;
+        }
+
+        .validation-toggle input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: var(--accent-red);
+            cursor: pointer;
+        }
+
+        .validation-info {
+            display: block;
+            margin-top: 8px;
+            padding-top: 7px;
+            border-top: 1px solid var(--border-light);
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 500;
+            line-height: 1.45;
+            overflow-wrap: anywhere;
+        }
+
+        .validation-field { display: block; margin-top: 3px; }
+        .validation-field strong { color: var(--text-main); font-weight: 700; }
+
+        /* Main Layout */
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(270px, 340px) minmax(0, 1fr);
+            align-items: start;
+            gap: 18px;
+            padding-bottom: 30px;
+        }
+
+        /* Sidebar Navigation */
+        .nav { overflow: hidden; max-height: calc(100vh - 30px); overflow: auto; }
+        .panel-heading { padding: 17px 18px 13px; border-bottom: 1px solid var(--border-color); }
+        .panel-heading h2 { margin: 0; font-size: 15px; color: var(--text-main); }
+        .panel-heading p { margin: 3px 0 0; color: var(--text-muted); font-size: 12px; }
+
+        .archive-tree { padding: 8px; }
+        .year-group { margin: 4px 0 10px; }
+        .year-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            width: 100%;
+            padding: 10px 10px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            text-align: left;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        .year-heading:hover, .category-heading:hover { background: #252525; }
+        .year-title { font-weight: 750; }
+        .year-count, .report-count { color: var(--text-muted); font-size: 11px; }
+        .year-chevron { color: var(--accent-red); transition: transform .15s ease; }
+        .year-group.collapsed .year-chevron { transform: rotate(-90deg); }
+        .year-content { padding: 0 4px 4px 11px; border-left: 1px solid var(--border-color); margin-left: 10px; }
+        .year-group.collapsed .year-content { display: none; }
+
+        .category-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            margin: 5px 0 2px;
+            padding: 7px 8px;
+            border: 0;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-main);
+            font-size: 12px;
+            font-weight: 700;
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .category-list { padding: 0 0 4px 6px; }
+        .report-button {
+            display: block;
+            width: 100%;
+            margin: 2px 0;
+            padding: 9px 10px;
+            border: 1px solid transparent;
+            border-left: 3px solid transparent;
+            border-radius: 6px;
+            background: transparent;
+            color: var(--text-muted);
+            text-align: left;
+            cursor: pointer;
+        }
+
+        .report-button:hover { background: #2a2a2a; color: var(--text-main); }
+        .report-button[aria-current="true"] {
+            border-color: var(--border-color);
+            border-left-color: var(--accent-red);
+            background: #252525;
+            color: var(--text-main);
+        }
+
+        .report-name { display: block; font-size: 12px; font-weight: 700; line-height: 1.35; }
+        .report-detail { display: block; margin-top: 3px; font-size: 10px; }
+        .empty-state { padding: 25px 18px; color: var(--text-muted); font-size: 13px; text-align: center; }
+
+        /* Viewer Area */
+        .viewer { min-height: 620px; overflow: hidden; }
+        .viewer-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            min-height: 72px;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .selected-report { min-width: 0; }
+        .selected-report h2 { overflow: hidden; margin: 0; font-size: 17px; text-overflow: ellipsis; white-space: nowrap; color: var(--text-main); }
+        .selected-report p { margin: 3px 0 0; color: var(--text-muted); font-size: 12px; }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 5px;
+            padding: 9px 18px 0;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--card-bg);
+        }
+
+        .tab-button {
+            padding: 10px 13px;
+            border: 0;
+            border-bottom: 2px solid transparent;
+            background: transparent;
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .tab-button:hover { color: var(--text-main); }
+        .tab-button[aria-selected="true"] { border-bottom-color: var(--accent-red); color: var(--text-main); }
+        .tab-panel { min-height: 535px; background: var(--bg-color); }
+        .tab-panel[hidden] { display: none; }
+        
+        /* iFrame (Keep white background for document readability) */
+        .report-frame { display: block; width: 100%; height: min(76vh, 900px); min-height: 535px; border: 0; background: white; }
+
+        /* Data Panels */
+        .data-panel { padding: clamp(18px, 3vw, 30px); }
+        .data-panel h3 { margin: 0 0 15px; font-size: 20px; color: var(--text-main); }
+        .data-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+        .data-field {
+            min-height: 83px;
+            padding: 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+        }
+
+        .data-field span { display: block; color: var(--text-muted); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+        .data-field strong { display: block; overflow-wrap: anywhere; margin-top: 5px; font-size: 15px; color: var(--text-main); }
+        .data-note { margin: 18px 0 0; color: var(--text-muted); font-size: 12px; }
+        
+        .analysis-section {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .analysis-section h3 { margin: 0 0 13px; font-size: 18px; color: var(--text-main); }
+        .analysis-grid .data-field { min-height: 72px; }
+        
+        .inspector-list { display: grid; gap: 11px; }
+        .inspector-table {
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--card-bg);
+        }
+        .inspector-table h4 { margin: 0 0 8px; font-size: 14px; color: var(--text-main); }
+        .inspector-table p { margin: 5px 0; color: var(--text-muted); font-size: 12px; }
+        .inspector-headers { color: var(--text-muted) !important; overflow-wrap: anywhere; font-family: monospace; }
+        
+        .confidence-summary { margin: 0 0 8px; font-weight: 700; color: var(--text-main); }
+        .confidence-reasons { margin: 0; padding-left: 20px; color: var(--text-muted); font-size: 12px; }
+        
+        /* Table Previews */
+        .preview-wrap { overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; background: var(--card-bg); }
+        .preview-table { width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; }
+        .preview-table th, .preview-table td { max-width: 300px; padding: 9px 11px; border-bottom: 1px solid var(--border-color); text-align: left; }
+        .preview-table th { position: sticky; top: 0; background: #252525; color: var(--accent-red); font-weight: 600; }
+        .preview-table td { overflow: hidden; color: var(--text-main); text-overflow: ellipsis; }
+        .preview-table tr:nth-child(even) { background-color: #1a1a1a; }
+        .preview-table tr:hover { background-color: #2a2a2a; }
+        
+        .preview-empty { color: var(--text-muted); font-size: 12px; }
+        .noscript { margin: 20px; color: var(--accent-red); }
+
+        @media (max-width: 850px) {
+            .layout { grid-template-columns: 1fr; }
+            .nav { max-height: 48vh; }
+            .viewer { min-height: 500px; }
+        }
+
+        @media (max-width: 560px) {
+            .container { width: calc(100% - 24px); }
+            .hero { margin-top: 12px; }
+            .upload-card { align-items: flex-start; flex-direction: column; }
+            .stats { gap: 8px; }
+            .stat { min-height: 79px; padding: 13px; }
+            .stat-value { font-size: 23px; }
+            .stat-label { font-size: 9px; letter-spacing: .1em; }
+            .viewer-top { align-items: flex-start; flex-direction: column; }
+            .data-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</style>
+</head>
+<body>
+<!-- Main nav removed per user request - was: Main Archive / Timing Data / Weather Reports -->
+<main class="container">
+    <header class="hero">
+        <div class="eyebrow">Motorsport timing archive</div>
+        <h1>Bathurst 1000 Research Archive</h1>
+        <p>Explore official event timing reports by event, year and session. Select a report to view the original document or inspect the extracted session metadata.</p>
+    </header>
+
+    <section class="upload-card" aria-label="Report archive upload">
+        <div class="upload-copy">
+            <strong>Load a report collection</strong>
+            <span>Select the folder containing your timing HTML reports. Files stay in this browser session.</span>
+            <div class="status" id="uploadStatus" role="status">No reports loaded</div>
+        </div>
+        <label class="primary-button" for="folderInput">＋ <span>Choose report folder</span></label>
+        <input id="folderInput" type="file" webkitdirectory multiple accept=".html,.htm,text/html" aria-label="Choose a folder of timing reports">
+    </section>
+
+    <section class="stats" aria-label="Archive statistics">
+        <article class="stat"><div class="stat-label">Event years</div><div class="stat-value" id="yearCount">0</div></article>
+        <article class="stat"><div class="stat-label">Reports</div><div class="stat-value" id="reportCount">0</div></article>
+        <article class="stat"><div class="stat-label">Categories</div><div class="stat-value" id="categoryCount">0</div></article>
+    </section>
+
+    <label class="sr-only" for="reportSearch" style="position:absolute;left:-10000px">Search reports</label>
+    <input class="search-box" id="reportSearch" type="search" placeholder="Search events, sessions, report types…" autocomplete="off">
+    <label class="validation-toggle" for="validationMode">
+        <input id="validationMode" type="checkbox">
+        <span>Validation Mode</span>
+    </label>
+
+    <section class="layout">
+        <aside class="nav" aria-label="Archive navigation">
+            <div class="panel-heading">
+                <h2>Event archive</h2>
+                <p id="archiveHint">Load a folder to browse reports</p>
+            </div>
+            <div class="archive-tree" id="archiveTree">
+                <div class="empty-state">Choose a folder of timing HTML reports to begin.</div>
+            </div>
+        </aside>
+
+        <section class="viewer" aria-label="Report viewer">
+            <div class="viewer-top">
+                <div class="selected-report">
+                    <h2 id="selectedTitle">Select a report</h2>
+                    <p id="selectedSubtitle">Your report and session details will appear here.</p>
+                </div>
+            </div>
+            
+            <div class="tabs" role="tablist" aria-label="Selected report view">
+                <button class="tab-button" id="reportTab" type="button" role="tab" aria-selected="true" aria-controls="reportPanel">Report</button>
+                <button class="tab-button" id="dataTab" type="button" role="tab" aria-selected="false" aria-controls="dataPanel">Session Data</button>
+                <button class="tab-button" id="researchTab" type="button" role="tab" aria-selected="false" aria-controls="researchPanel">Research</button>
+                <button class="tab-button" id="weekendTab" type="button" role="tab" aria-selected="false" aria-controls="weekendPanel">Weekend Analysis</button>
+            </div>
+
+            <div class="tab-panel" id="reportPanel" role="tabpanel" aria-labelledby="reportTab">
+                <iframe class="report-frame" id="reportFrame" title="Original timing report" src="about:blank"></iframe>
+            </div>
+
+            <div class="tab-panel" id="dataPanel" role="tabpanel" aria-labelledby="dataTab" hidden>
+                <section class="data-panel" id="sessionDataPanel">
+                    <h3>Session Summary</h3>
+                    <div class="data-grid" id="sessionDataGrid">
+                        <div class="data-field"><span>Year</span><strong>—</strong></div>
+                        <div class="data-field"><span>Event</span><strong>—</strong></div>
+                        <div class="data-field"><span>Session Type</span><strong>—</strong></div>
+                        <div class="data-field"><span>Report Type</span><strong>—</strong></div>
+                    </div>
+                    
+                    <section class="analysis-section" aria-labelledby="analysisHeading">
+                        <h3 id="analysisHeading">Report Analysis</h3>
+                        <div class="data-grid analysis-grid" id="reportAnalysisGrid">
+                            <div class="data-field"><span>Document Title</span><strong>—</strong></div>
+                            <div class="data-field"><span>Tables Found</span><strong>—</strong></div>
+                            <div class="data-field"><span>Text Length</span><strong>—</strong></div>
+                        </div>
+                    </section>
+                    
+                    <section class="analysis-section" aria-labelledby="tableInspectorHeading">
+                        <h3 id="tableInspectorHeading">Table Inspector</h3>
+                        <div class="inspector-list" id="tableInspector"><p class="preview-empty">Select a report to inspect its tables.</p></div>
+                    </section>
+                    
+                    <section class="analysis-section" aria-labelledby="resultsDetectionHeading">
+                        <h3 id="resultsDetectionHeading">Results Table Detection</h3>
+                        <div id="resultsDetection"><p class="preview-empty">Select a report to analyze its tables.</p></div>
+                    </section>
+                    
+                    <section class="analysis-section" aria-labelledby="resultsPreviewHeading">
+                        <h3 id="resultsPreviewHeading">Results Preview</h3>
+                        <div id="resultsPreview"><p class="preview-empty">No results table has been identified.</p></div>
+                    </section>
+                    
+                    <p class="data-note">Report content is analyzed in-browser for inspection. No report data is uploaded or saved.</p>
+                </section>
+            </div>
+
+            <div class="tab-panel" id="researchPanel" role="tabpanel" aria-labelledby="researchTab" hidden>
+                <section class="data-panel">
+                    <h3>Research Notes</h3>
+                    <div class="data-grid">
+                        <div class="data-field"><span>Winner</span><strong id="researchWinner">--</strong></div>
+                        <div class="data-field"><span>Pole Position</span><strong id="researchPole">--</strong></div>
+                        <div class="data-field"><span>Fastest Lap</span><strong>Not Entered</strong></div>
+                        <div class="data-field"><span>Weather</span><strong>Not Entered</strong></div>
+                        <div class="data-field"><span>Attendance</span><strong>Not Entered</strong></div>
+                    </div>
+                </section>
+            </div>
+
+            <div class="tab-panel" id="weekendPanel" role="tabpanel" aria-labelledby="weekendTab" hidden>
+                <section class="data-panel">
+                    <h3>Weekend Analysis</h3>
+                    <div class="data-grid">
+                        <div class="data-field"><span>Fastest Practice Driver</span><strong id="weekendFastestDriver">--</strong></div>
+                        <div class="data-field"><span>Fastest Practice Time</span><strong id="weekendFastestTime">--</strong></div>
+                        <div class="data-field"><span>Biggest Improver</span><strong>--</strong></div>
+                        <div class="data-field"><span>Field Spread</span><strong>--</strong></div>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </section>
+</main>
+<noscript><p class="noscript">This archive requires JavaScript to load and inspect reports.</p></noscript>
+
+<script>
+"use strict";
+
+const archiveState = {
+    reports: [],
+    selectedReportId: null,
+    searchTerm: "",
+    validationMode: false,
+    activeTab: "report",
+    currentObjectUrl: null
+};
+
+const dom = {
+    folderInput: document.getElementById("folderInput"),
+    searchInput: document.getElementById("reportSearch"),
+    validationMode: document.getElementById("validationMode"),
+    tree: document.getElementById("archiveTree"),
+    uploadStatus: document.getElementById("uploadStatus"),
+    archiveHint: document.getElementById("archiveHint"),
+    yearCount: document.getElementById("yearCount"),
+    reportCount: document.getElementById("reportCount"),
+    categoryCount: document.getElementById("categoryCount"),
+    selectedTitle: document.getElementById("selectedTitle"),
+    selectedSubtitle: document.getElementById("selectedSubtitle"),
+    frame: document.getElementById("reportFrame"),
+    reportTab: document.getElementById("reportTab"),
+    dataTab: document.getElementById("dataTab"),
+    researchTab: document.getElementById("researchTab"),
+    weekendTab: document.getElementById("weekendTab"),
+    weekendPanel: document.getElementById("weekendPanel"),
+    reportPanel: document.getElementById("reportPanel"),
+    dataPanel: document.getElementById("dataPanel"),
+    researchPanel: document.getElementById("researchPanel"),
+    sessionDataGrid: document.getElementById("sessionDataGrid"),
+    reportAnalysisGrid: document.getElementById("reportAnalysisGrid"),
+    tableInspector: document.getElementById("tableInspector"),
+    resultsDetection: document.getElementById("resultsDetection"),
+    resultsPreview: document.getElementById("resultsPreview"),
+    weekendFastestDriver: document.getElementById("weekendFastestDriver"),
+    weekendFastestTime: document.getElementById("weekendFastestTime"),
+    researchWinner: document.getElementById("researchWinner"),
+    researchPole: document.getElementById("researchPole")
+};
+
+function titleCase(value) {
+    const acronyms = new Set(["amp", "fai", "v8", "fia", "gt", "tv"]);
+    return value.toLowerCase().replace(/\b[a-z0-9]+\b/g, word =>
+        acronyms.has(word) ? word.toUpperCase() : word.charAt(0).toUpperCase() + word.slice(1)
+    );
+}
+
+function extractYear(text) {
+    const match = String(text || "").match(/\b(?:19|20)\d{2}\b/);
+    return match ? match[0] : "";
+}
+
+function extractEventName(sourceName, headingText) {
+    const source = String(sourceName || "").replace(/\.(?:html?)$/i, "").replace(/\s*\(\d+\)\s*$/, "").trim();
+    const year = extractYear(source) || extractYear(headingText);
+    const nameParts = [source, headingText].filter(Boolean);
+
+    for (const text of nameParts) {
+        const withoutLeadingYear = text.replace(/^\s*(?:19|20)\d{2}\s*/, "");
+        const eventMatch = withoutLeadingYear.match(/^(.{1,100}?\b(?:Bathurst\s*1000|FAI\s*1000|Supercheap\s*Bathurst\s*1000))/i);
+        if (eventMatch) {
+            const eventName = titleCase(eventMatch[1].replace(/\s+/g, " ").trim());
+            return year ? `${year} ${eventName}` : eventName;
+        }
+        const shortEvent = withoutLeadingYear.match(/^(.{1,90}?\b1000)\b/i);
+        if (shortEvent) {
+            const eventName = titleCase(shortEvent[1].replace(/\s+/g, " ").trim());
+            return year ? `${year} ${eventName}` : eventName;
+        }
+    }
+    if (year) return `${year} Bathurst 1000`;
+    return "Bathurst 1000";
+}
+
+function detectReportType(text) {
+    const value = String(text || "").toLowerCase().replace(/[_-]+/g, " ").replace(/\s+/g, " ");
+    if (/individual\s+lap\s+times?/.test(value)) return "Individual Lap Times";
+    if (/lap\s+charts?/.test(value)) return "Lap Chart";
+    if (/top\s*15\s+shootout|top\s+fifteen\s+shootout/.test(value)) return "Top 15 Shootout";
+    if (/top\s*10\s+shootout|top\s+ten\s+shootout/.test(value)) return "Top 10 Shootout";
+    if (/shootout/.test(value)) return "Shootout";
+    if (/sector\s+and\s+lap\s+times?/.test(value)) return "Sector and Lap Times";
+    if (/series\s+points/.test(value)) return "Series Points";
+    if (/team\s+points/.test(value)) return "Team Points";
+    if (/warm[\s-]*up/.test(value)) return "Warm-Up Results";
+    if (/combined\s+qualifying|qualifying\s+combined/.test(value)) return "Combined Qualifying";
+    if (/qualifying/.test(value)) return "Qualifying Results";
+    if (/free\s+practice/.test(value)) return "Free Practice";
+    if (/practice\s+sessions?|\bpractice\b/.test(value)) return "Practice";
+    if (/\brace\b/.test(value)) return "Race Result";
+    if (/lap\s+times?/.test(value)) return "Lap Times";
+    if (/result/.test(value)) return "Results";
+    return "Session Report";
+}
+
+function detectCategory(text, reportType) {
+    const value = String(text || "").toLowerCase().replace(/[_-]+/g, " ");
+    if (/individual\s+lap\s+times?/.test(value)) return "Individual Lap Times";
+    if (/lap\s+charts?/.test(value)) return "Lap Charts";
+    if (/top\s*(?:10|15|ten|fifteen)?\s*shootout|shootout/.test(value)) return "Shootout";
+    if (/warm[\s-]*up/.test(value)) return "Warm-Up";
+    if (/combined\s+qualifying|qualifying\s+combined/.test(value)) return "Combined Qualifying";
+    if (/free\s+practice/.test(value)) return "Free Practice";
+    if (/qualifying/.test(value)) return "Qualifying";
+    if (/practice/.test(value)) return "Practice";
+    if (/\brace\b/.test(value)) return "Race";
+    return reportType || "Other Reports";
+}
+
+function getReportDisplayDetails(sourceName, reportType) {
+    const source = String(sourceName || "").replace(/\.(?:html?)$/i, "");
+    const session = source.match(/\bSession\s*\d+\s*[-–]?\s*([^]*?)(?=\s{2,}|$)/i);
+    if (session) {
+        const sessionKind = detectReportType(session[1]);
+        return `Session ${session[0].match(/\d+/)[0]} · ${sessionKind === "Session Report" ? reportType : sessionKind}`;
+    }
+    const practice = source.match(/\bPractice\s*(\d+)\b/i);
+    if (practice) return `Practice ${practice[1]}`;
+    const race = source.match(/\bRace\s*(\d+)\b/i);
+    if (race) return `Race ${race[1]}`;
+    if (reportType === "Individual Lap Times" || reportType === "Sector and Lap Times") return "Timing detail";
+    return reportType;
+}
+
+function extractSessionType(sourceName, headingText, reportType) {
+    const source = String(sourceName || "").replace(/\.(?:html?)$/i, "");
+    const explicitSession = source.match(/\bSession\s*(\d+)\s*[-–]?\s*(.*)$/i);
+    const sessionDescription = explicitSession?.[2]
+        ?.replace(/\s+(?:19|20)\d{2}\s+.*$/i, "")
+        ?.replace(/\s+(?:AMP|FAI)\s+Bathurst\s*1000.*$/i, "")
+        ?.replace(/\s{2,}.*$/, "")
+        ?.trim();
+    if (explicitSession) {
+        const sessionKind = sessionDescription?.match(/^(Non\s+Qualifying|Free\s+Practice|Combined\s+Qualifying|Qualifying|Warm[\s-]*Up|Run\s*Off|Practice(?:\s*\d+)?|Race(?:\s*\d+)?|Top\s*(?:10|15|Ten|Fifteen)?\s*Shootout)/i)?.[0];
+        const normalizedKind = sessionKind ? titleCase(sessionKind.replace(/\s+/g, " ")) : "";
+        return normalizedKind ? `Session ${explicitSession[1]} · ${normalizedKind}` : `Session ${explicitSession[1]}`;
+    }
+
+    const sourcePractice = source.match(/\b(Free\s+Practice|Combined\s+Qualifying|Practice\s*\d*|Qualifying|Warm[\s-]*Up|Top\s*(?:10|15|Ten|Fifteen)?\s*Shootout|Race(?:\s*\d+)?|Lap\s*Charts?)\b/i);
+    if (sourcePractice) return titleCase(sourcePractice[0].replace(/\s+/g, " "));
+
+    const headingLines = String(headingText || "").split(/\n+/).map(line => line.trim()).filter(Boolean);
+    const headingSession = headingLines.find(line => /session|practice|qualifying|shootout|warm[\s-]*up|\brace\b/i.test(line));
+    if (headingSession) return headingSession.replace(/\s+/g, " ");
+    return reportType || "Unknown";
+}
+
+function extractHeadings(documentNode) {
+    return [...documentNode.querySelectorAll("h1,h2,h3,h4,h5,h6")].flatMap(element => {
+        const copy = element.cloneNode(true);
+        copy.querySelectorAll("br").forEach(lineBreak => lineBreak.replaceWith("\n"));
+        return (copy.textContent || "").split(/\n+/).map(line => line.trim()).filter(Boolean);
+    });
+}
+
+function extractPreformattedResults(table) {
+    const pre = table.querySelector("pre");
+    if (!pre) return null;
+
+    const lines = (pre.innerText || pre.textContent || "").replace(/\u00a0/g, " ").split(/\r?\n/).map(line => line.replace(/\s+$/, ""));
+    const headerIndex = lines.findIndex(line => /\b(?:pos|position)\b/i.test(line) && /\bdriver\b/i.test(line));
+    if (headerIndex < 0) return null;
+
+    const headerLine = lines[headerIndex];
+    const headerMatches = [...headerLine.matchAll(/\S+/g)];
+    if (!headerMatches.length) return null;
+    const columnStarts = headerMatches.map(match => match.index);
+    const headers = headerMatches.map(match => match[0]);
+    const rows = [];
+
+    for (const line of lines.slice(headerIndex + 1)) {
+        if (!/^\s*\d{1,3}\s+\S/.test(line) || /^[-_=]{3,}/.test(line.trim())) continue;
+        rows.push(columnStarts.map((start, index) => line.slice(start, columnStarts[index + 1] ?? undefined).trim()));
+    }
+
+    return rows.length ? { headers, rows } : null;
+}
+
+function extractTables(documentNode) {
+    return [...documentNode.querySelectorAll("table")].map((table, index) => {
+        const rows = [...table.querySelectorAll("tr")].filter(row => row.closest("table") === table);
+        const cellRows = rows.map(row => [...row.cells].map(cell => (cell.innerText || cell.textContent || "").replace(/\s+/g, " ").trim()));
+        const preformatted = extractPreformattedResults(table);
+        const firstRow = cellRows[0] || [];
+        const previewHeaders = preformatted?.headers || firstRow;
+        const previewRows = preformatted?.rows || cellRows.slice(1);
+        const tableText = (table.innerText || table.textContent || "").replace(/\s+/g, " ").trim();
+
+        return {
+            index: index + 1,
+            rowCount: preformatted ? preformatted.rows.length : rows.length,
+            columnCount: preformatted ? preformatted.headers.length : cellRows.reduce((maximum, row) => Math.max(maximum, row.length), 0),
+            headers: preformatted?.headers || firstRow,
+            htmlRowCount: rows.length,
+            htmlColumnCount: cellRows.reduce((maximum, row) => Math.max(maximum, row.length), 0),
+            detectionHeaders: preformatted?.headers || firstRow,
+            previewHeaders,
+            previewRows,
+            text: tableText
+        };
+    });
+}
+
+function detectResultsTable(tables) {
+    const signals = [
+        { name: "Position", weight: 25, matches: header => /\b(?:pos|position)\b/i.test(header) },
+        { name: "Driver", weight: 25, matches: header => /\bdriver\b/i.test(header) },
+        { name: "Entrant", weight: 15, matches: header => /\b(?:entrant|competitor|team)\b/i.test(header) },
+        { name: "Vehicle", weight: 15, matches: header => /\b(?:vehicle|car)\b/i.test(header) },
+        { name: "Time or Lap", weight: 20, matches: header => /\b(?:time|lap|fastest)\b/i.test(header) }
+    ];
+    let best = { likelyResultsTable: false, confidence: 0, reason: [], tableIndex: null };
+
+    for (const table of tables) {
+        const headers = (table.detectionHeaders || []).filter(Boolean);
+        const haystack = headers.length ? headers : [table.text || ""];
+        const matched = signals.filter(signal => haystack.some(header => signal.matches(header)));
+        const confidence = matched.reduce((score, signal) => score + signal.weight, 0);
+        const hasPosition = matched.some(signal => signal.name === "Position");
+        const hasDriver = matched.some(signal => signal.name === "Driver");
+        const candidate = {
+            likelyResultsTable: hasPosition && hasDriver && confidence >= 50,
+            confidence,
+            reason: matched.map(signal => `contains ${haystack.find(header => signal.matches(header))}`),
+            tableIndex: table.index
+        };
+        if (candidate.confidence > best.confidence) best = candidate;
+    }
+
+    return best;
+}
+
+function extractTablePreview(table, limit = 20) {
+    if (!table) return { headers: [], rows: [] };
+    return {
+        headers: table.previewHeaders || [],
+        rows: (table.previewRows || []).slice(0, limit),
+        totalRows: (table.previewRows || []).length
+    };
+}
+
+function extractVisibleTextLength(documentNode) {
+    const body = documentNode.body;
+    if (!body) return 0;
+    const visibleText = body.innerText;
+    if (typeof visibleText === "string") return visibleText.trim().length;
+
+    const clone = body.cloneNode(true);
+    clone.querySelectorAll("script,style,template,[hidden]").forEach(element => element.remove());
+    clone.querySelectorAll("[style]").forEach(element => {
+        const style = element.getAttribute("style") || "";
+        if (/display\s*:\s*none|visibility\s*:\s*hidden/i.test(style)) element.remove();
+    });
+    return (clone.textContent || "").trim().length;
+}
+
+function parseNatsoftReport(htmlText, sourceName = "") {
+    const parser = new DOMParser();
+    const documentNode = parser.parseFromString(String(htmlText || ""), "text/html");
+    const title = documentNode.querySelector("title")?.textContent?.trim() || "";
+    const headings = extractHeadings(documentNode);
+    const headingText = [...headings, title].filter(Boolean).join("\n");
+    const year = extractYear(`${headingText}\n${sourceName}`);
+    const event = extractEventName(sourceName, headingText);
+    const combinedTypeText = `${headingText}\n${sourceName}`;
+    const reportType = detectReportType(combinedTypeText);
+    const session = extractSessionType(sourceName, headingText, reportType);
+    const tables = extractTables(documentNode);
+    const resultsDetection = detectResultsTable(tables);
+    const resultsTable = resultsDetection.likelyResultsTable ? tables.find(table => table.index === resultsDetection.tableIndex) : null;
+    const resultsPreview = extractTablePreview(resultsTable);
+
+// --- ROBUST PRE & TABLE DATA EXTRACTION ---
+    let fastestDriver = "--";
+    let fastestTime = "--";
+
+    for (const table of tables) {
+        // Check if there is a <pre> element (timing's standard text format)
+        const pre = table.html?.includes("<pre>") || documentNode.querySelectorAll("pre")[tables.indexOf(table)];
+        const preElement = documentNode.querySelectorAll("table")[tables.indexOf(table)]?.querySelector("pre");
+        
+        let lines = [];
+        if (preElement) {
+            lines = (preElement.innerText || preElement.textContent || "").split(/\r?\n/);
+        } else {
+            // Fallback to regular preview rows if no <pre> block
+            lines = (table.previewRows || []).map(r => r.join(" "));
+        }
+
+        for (const line of lines) {
+            // Look for lines starting with position numbers like " 1 " or "1."
+            const match = line.match(/^\s*(\d{1,2})\s+([A-Z\s.-]{3,25})\s+([\d:.]+)/);
+            if (match) {
+                const pos = parseInt(match[1], 10);
+                if (pos === 1) {
+                    fastestDriver = match[2].trim();
+                    fastestTime = match[3].trim();
+                    break;
+                }
+            }
+        }
+        if (fastestDriver !== "--") break;
+    }
+
+    return {
+        year,
+        event,
+        session,
+        reportType,
+        title,
+        headings,
+        tableCount: tables.length,
+        tables,
+        textLength: extractVisibleTextLength(documentNode),
+        resultsDetection,
+        resultsPreview,
+        fastestDriver,
+        fastestTime
+    };
+}
+
+const archiveManager = {
+    async loadFolder(fileList) {
+        const candidates = [...fileList].filter(file => /\.(?:html?)$/i.test(file.name) && file.name.toLocaleLowerCase() !== "session.html");
+        if (!candidates.length) {
+            dom.uploadStatus.textContent = "No HTML reports were found in that folder.";
+            return;
+        }
+
+        this.clearSelection();
+        archiveState.reports = candidates.map((file, index) => {
+            const year = extractYear(file.name);
+            const reportType = detectReportType(file.name);
+            return {
+                id: `${index}-${file.size}-${file.lastModified}`,
+                file,
+                year: year || "Unknown year",
+                event: extractEventName(file.name, ""),
+                reportType,
+                category: detectCategory(file.name, reportType),
+                displayName: reportType,
+                displayDetails: getReportDisplayDetails(file.name, reportType),
+                parsed: null
+            };
+        });
+        this.updateStats();
+        this.render();
+        dom.uploadStatus.textContent = `${archiveState.reports.length.toLocaleString()} HTML reports loaded`;
+    },
+
+    clearSelection() {
+        if (archiveState.currentObjectUrl) URL.revokeObjectURL(archiveState.currentObjectUrl);
+        archiveState.currentObjectUrl = null;
+        archiveState.selectedReportId = null;
+        dom.frame.src = "about:blank";
+    },
+
+    updateStats() {
+        const years = new Set(archiveState.reports.map(report => report.year));
+        const categories = new Set(archiveState.reports.map(report => report.category));
+        dom.yearCount.textContent = years.size.toLocaleString();
+        dom.reportCount.textContent = archiveState.reports.length.toLocaleString();
+        dom.categoryCount.textContent = categories.size.toLocaleString();
+        dom.archiveHint.textContent = archiveState.reports.length
+            ? `${years.size.toLocaleString()} event years · ${archiveState.reports.length.toLocaleString()} reports`
+            : "Load a folder to browse reports";
+    },
+
+    getVisibleReports() {
+        const term = archiveState.searchTerm.trim().toLocaleLowerCase();
+        if (!term) return archiveState.reports;
+        return archiveState.reports.filter(report => {
+            const searchable = [report.file.name, report.event, report.year, report.category, report.displayName, report.displayDetails, report.reportType].join(" ").toLocaleLowerCase();
+            return searchable.includes(term);
+        });
+    },
+
+    render() {
+        const visibleReports = this.getVisibleReports();
+        const groups = new Map();
+        for (const report of visibleReports) {
+            const key = `${report.year}\u0000${report.event}`;
+            if (!groups.has(key)) groups.set(key, { year: report.year, event: report.event, reports: [] });
+            groups.get(key).reports.push(report);
+        }
+
+        const sortedGroups = [...groups.values()].sort((a, b) => b.year.localeCompare(a.year, undefined, { numeric: true }) || a.event.localeCompare(b.event));
+        const tree = document.createDocumentFragment();
+        for (const group of sortedGroups) {
+            const yearGroup = document.createElement("section");
+            yearGroup.className = "year-group";
+
+            const yearButton = document.createElement("button");
+            yearButton.type = "button";
+            yearButton.className = "year-heading";
+            yearButton.setAttribute("aria-expanded", "true");
+            const title = document.createElement("span");
+            title.className = "year-title";
+            title.textContent = group.event;
+            const count = document.createElement("span");
+            count.className = "year-count";
+            count.textContent = `${group.reports.length} reports`;
+            const chevron = document.createElement("span");
+            chevron.className = "year-chevron";
+            chevron.textContent = "⌄";
+            yearButton.append(title, count, chevron);
+            yearButton.addEventListener("click", () => {
+                yearGroup.classList.toggle("collapsed");
+                yearButton.setAttribute("aria-expanded", String(!yearGroup.classList.contains("collapsed")));
+            });
+
+            const yearContent = document.createElement("div");
+            yearContent.className = "year-content";
+            const categoryGroups = new Map();
+            for (const report of group.reports) {
+                if (!categoryGroups.has(report.category)) categoryGroups.set(report.category, []);
+                categoryGroups.get(report.category).push(report);
+            }
+
+            for (const [category, reports] of [...categoryGroups].sort(([a], [b]) => a.localeCompare(b))) {
+                const categorySection = document.createElement("section");
+                const categoryButton = document.createElement("button");
+                categoryButton.type = "button";
+                categoryButton.className = "category-heading";
+                const categoryLabel = document.createElement("span");
+                categoryLabel.textContent = category;
+                const categoryCount = document.createElement("span");
+                categoryCount.className = "report-count";
+                categoryCount.textContent = reports.length;
+                categoryButton.append(categoryLabel, categoryCount);
+
+                const reportList = document.createElement("div");
+                reportList.className = "category-list";
+                for (const report of reports.sort((a, b) => a.displayDetails.localeCompare(b.displayDetails) || a.displayName.localeCompare(b.displayName))) {
+                    const reportButton = document.createElement("button");
+                    reportButton.type = "button";
+                    reportButton.className = "report-button";
+                    reportButton.dataset.reportId = report.id;
+                    reportButton.setAttribute("aria-current", String(report.id === archiveState.selectedReportId));
+                    const reportName = document.createElement("span");
+                    reportName.className = "report-name";
+                    reportName.textContent = archiveState.validationMode && report.reportType === "Race Result" ? `🏆 ${report.displayName}` : report.displayName;
+                    const reportDetail = document.createElement("span");
+                    reportDetail.className = "report-detail";
+                    reportDetail.textContent = report.displayDetails;
+                    reportButton.append(reportName, reportDetail);
+                    
+                    if (archiveState.validationMode) {
+                        const validationInfo = document.createElement("span");
+                        validationInfo.className = "validation-info";
+                        const validationFields = [["Original", report.file.name], ["Year", report.year], ["Category", report.category], ["Detected Report Type", report.reportType]];
+                        for (const [label, value] of validationFields) {
+                            const field = document.createElement("span");
+                            field.className = "validation-field";
+                            const fieldLabel = document.createElement("strong");
+                            fieldLabel.textContent = `${label}: `;
+                            field.append(fieldLabel, document.createTextNode(value));
+                            validationInfo.append(field);
+                        }
+                        reportButton.append(validationInfo);
+                    }
+                    reportButton.addEventListener("click", () => reportViewer.select(report.id));
+                    reportList.append(reportButton);
+                }
+
+                categoryButton.addEventListener("click", () => {
+                    reportList.hidden = !reportList.hidden;
+                    categoryButton.setAttribute("aria-expanded", String(!reportList.hidden));
+                });
+                categoryButton.setAttribute("aria-expanded", "true");
+                categorySection.append(categoryButton, reportList);
+                yearContent.append(categorySection);
+            }
+            yearGroup.append(yearButton, yearContent);
+            tree.append(yearGroup);
+        }
+
+        if (!sortedGroups.length) {
+            const empty = document.createElement("div");
+            empty.className = "empty-state";
+            empty.textContent = archiveState.reports.length ? "No reports match your search." : "Choose a folder of timing HTML reports to begin.";
+            tree.append(empty);
+        }
+        dom.tree.replaceChildren(tree);
+    }
+};
+
+const reportViewer = {
+    async select(reportId) {
+        const report = archiveState.reports.find(item => item.id === reportId);
+        if (!report) return;
+
+        archiveState.selectedReportId = report.id;
+        if (archiveState.currentObjectUrl) URL.revokeObjectURL(archiveState.currentObjectUrl);
+        archiveState.currentObjectUrl = URL.createObjectURL(report.file);
+        dom.frame.src = archiveState.currentObjectUrl;
+        dom.selectedTitle.textContent = report.displayName;
+        dom.selectedSubtitle.textContent = `${report.event} · ${report.displayDetails}`;
+        archiveManager.render();
+
+        try {
+            const htmlText = await report.file.text();
+            const parsed = reportParser.parse(htmlText, report.file.name);
+            if (archiveState.selectedReportId !== report.id) return;
+            report.parsed = parsed;
+            sessionData.render(report);
+        } catch (error) {
+            console.error("Unable to read the selected timing report.", error);
+            if (archiveState.selectedReportId !== report.id) return;
+            report.parsed = { error: "The selected report could not be read." };
+            sessionData.render(report);
+        }
+    }
+};
+
+const reportParser = {
+    parse(htmlText, sourceName) {
+        return parseNatsoftReport(htmlText, sourceName);
+    }
+};
+
+const sessionData = {
+    render(report) {
+        const parsed = report.parsed;
+        
+        if (dom.weekendFastestDriver) dom.weekendFastestDriver.textContent = parsed?.fastestDriver || "--";
+        if (dom.weekendFastestTime) dom.weekendFastestTime.textContent = parsed?.fastestTime || "--";
+        if (dom.researchWinner) dom.researchWinner.textContent = parsed?.fastestDriver || "--";
+        
+        const summary = parsed?.error
+            ? [["Year", report.year], ["Event", report.event], ["Session", report.displayDetails], ["Report Type", report.reportType]]
+            : [["Year", parsed?.year || report.year], ["Event", parsed?.event || report.event], ["Session", parsed?.session || report.displayDetails], ["Report Type", parsed?.reportType || report.reportType]];
+        this.renderFields(dom.sessionDataGrid, summary);
+
+        const analysis = parsed?.error
+            ? [["Document Title", parsed.error], ["Tables Found", "Unavailable"], ["Text Length", "Unavailable"]]
+            : [["Document Title", parsed?.title || "Untitled document"], ["Tables Found", String(parsed?.tableCount ?? "—")], ["Text Length", parsed ? parsed.textLength.toLocaleString() : "Reading report…"]];
+        this.renderFields(dom.reportAnalysisGrid, analysis);
+
+        if (parsed?.error) {
+            this.renderMessage(dom.tableInspector, parsed.error);
+            this.renderMessage(dom.resultsDetection, parsed.error);
+            this.renderMessage(dom.resultsPreview, parsed.error);
+            return;
+        }
+
+        this.renderTableInspector(parsed?.tables || [], parsed?.resultsDetection);
+        this.renderResultsDetection(parsed?.resultsDetection);
+        this.renderResultsPreview(parsed?.resultsDetection, parsed?.resultsPreview);
+    },
+
+    renderFields(container, fields) {
+        const fragment = document.createDocumentFragment();
+        for (const [label, value] of fields) {
+            const field = document.createElement("div");
+            field.className = "data-field";
+            const labelNode = document.createElement("span");
+            labelNode.textContent = label;
+            const valueNode = document.createElement("strong");
+            valueNode.textContent = value;
+            field.append(labelNode, valueNode);
+            fragment.append(field);
+        }
+        container.replaceChildren(fragment);
+    },
+
+    renderMessage(container, message) {
+        const paragraph = document.createElement("p");
+        paragraph.className = "preview-empty";
+        paragraph.textContent = message;
+        container.replaceChildren(paragraph);
+    },
+
+    renderTableInspector(tables, resultsDetection) {
+        if (!tables.length) {
+            this.renderMessage(dom.tableInspector, "No HTML tables were found in this report.");
+            return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        for (const table of tables) {
+            const card = document.createElement("article");
+            card.className = "inspector-table";
+            const heading = document.createElement("h4");
+            heading.textContent = `Table ${table.index}`;
+            const dimensions = document.createElement("p");
+            dimensions.textContent = `Rows: ${table.rowCount} · Columns: ${table.columnCount}`;
+            const headerLine = document.createElement("p");
+            headerLine.className = "inspector-headers";
+            const isDetectedResultsTable = resultsDetection?.likelyResultsTable && resultsDetection.tableIndex === table.index;
+            const headers = isDetectedResultsTable ? table.detectionHeaders : table.headers;
+            headerLine.textContent = headers?.length ? `Headers: ${headers.join(" | ")}` : "Headers: No first-row cell contents";
+            card.append(heading, dimensions, headerLine);
+            fragment.append(card);
+        }
+        dom.tableInspector.replaceChildren(fragment);
+    },
+
+    renderResultsDetection(detection) {
+        const fragment = document.createDocumentFragment();
+        const summary = document.createElement("p");
+        summary.className = "confidence-summary";
+        summary.textContent = detection?.likelyResultsTable ? `Likely results table: Table ${detection.tableIndex} · Confidence: ${detection.confidence}%` : `Likely results table: No · Best match confidence: ${detection?.confidence ?? 0}%`;
+        fragment.append(summary);
+
+        const reasons = detection?.reason || [];
+        if (reasons.length) {
+            const list = document.createElement("ul");
+            list.className = "confidence-reasons";
+            for (const reason of reasons) {
+                const item = document.createElement("li");
+                item.textContent = reason;
+                list.append(item);
+            }
+            fragment.append(list);
+        } else {
+            const note = document.createElement("p");
+            note.className = "preview-empty";
+            note.textContent = "No Position/Driver result-table signals were detected.";
+            fragment.append(note);
+        }
+        dom.resultsDetection.replaceChildren(fragment);
+    },
+
+    renderResultsPreview(detection, preview) {
+        if (!detection?.likelyResultsTable || !preview?.headers?.length) {
+            this.renderMessage(dom.resultsPreview, "No likely results table was detected for preview.");
+            return;
+        }
+
+        const wrap = document.createElement("div");
+        wrap.className = "preview-wrap";
+        const table = document.createElement("table");
+        table.className = "preview-table";
+        const head = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        for (const header of preview.headers) {
+            const cell = document.createElement("th");
+            cell.textContent = header;
+            headerRow.append(cell);
+        }
+        head.append(headerRow);
+        table.append(head);
+
+        const body = document.createElement("tbody");
+        for (const row of preview.rows) {
+            const rowElement = document.createElement("tr");
+            for (let index = 0; index < preview.headers.length; index += 1) {
+                const cell = document.createElement("td");
+                cell.textContent = row[index] || "";
+                rowElement.append(cell);
+            }
+            body.append(rowElement);
+        }
+        table.append(body);
+        wrap.append(table);
+        const fragment = document.createDocumentFragment();
+        fragment.append(wrap);
+        if (preview.totalRows > preview.rows.length) {
+            const summary = document.createElement("p");
+            summary.className = "preview-empty";
+            summary.textContent = `Showing the first ${preview.rows.length} of ${preview.totalRows} result rows.`;
+            fragment.append(summary);
+        }
+        dom.resultsPreview.replaceChildren(fragment);
+    }
+};
+
+function setActiveTab(tabName) {
+    archiveState.activeTab = tabName;
+
+    const tabs = [
+        { name: "report", button: dom.reportTab, panel: dom.reportPanel },
+        { name: "data", button: dom.dataTab, panel: dom.dataPanel },
+        { name: "research", button: dom.researchTab, panel: dom.researchPanel },
+        { name: "weekend", button: dom.weekendTab, panel: dom.weekendPanel }
+    ];
+
+    tabs.forEach(tab => {
+        const isActive = tab.name === tabName;
+        if (tab.panel) tab.panel.hidden = !isActive;
+        if (tab.button) {
+            tab.button.setAttribute("aria-selected", String(isActive));
+            tab.button.tabIndex = isActive ? 0 : -1;
+        }
+    });
+
+    if (tabName === "data") {
+        const selected = archiveState.reports.find(report => report.id === archiveState.selectedReportId);
+        if (selected) sessionData.render(selected);
+    }
+}
+
+dom.folderInput.addEventListener("change", event => {
+    archiveManager.loadFolder(event.currentTarget.files);
+    event.currentTarget.value = "";
+});
+
+dom.searchInput.addEventListener("input", event => {
+    archiveState.searchTerm = event.currentTarget.value;
+    archiveManager.render();
+});
+
+dom.validationMode.addEventListener("change", event => {
+    archiveState.validationMode = event.currentTarget.checked;
+    archiveManager.render();
+});
+
+dom.reportTab.addEventListener("click", () => setActiveTab("report"));
+dom.dataTab.addEventListener("click", () => setActiveTab("data"));
+dom.researchTab.addEventListener("click", () => setActiveTab("research"));
+dom.weekendTab.addEventListener("click", () => setActiveTab("weekend"));
+
+const tabList = [
+    { button: dom.reportTab, name: "report" },
+    { button: dom.dataTab, name: "data" },
+    { button: dom.researchTab, name: "research" },
+    { button: dom.weekendTab, name: "weekend" }
+];
+
+tabList.forEach((tab, index) => {
+    tab.button.addEventListener("keydown", event => {
+        if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+            event.preventDefault();
+            const direction = event.key === "ArrowLeft" ? -1 : 1;
+            const nextIndex = (index + direction + tabList.length) % tabList.length;
+            const nextTab = tabList[nextIndex];
+            
+            setActiveTab(nextTab.name);
+            nextTab.button.focus();
+        }
+    });
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Official Session Reports</title>
+
+<style>
+
+:root{
+    --bg:#040812;
+    --panel:#0b1226;
+    --panel2:#0e1730;
+    --border:#1a2b4d;
+    --text:#e7ecff;
+    --muted:#8c97b5;
+    --blue:#3b82f6;
+    --blue2:#2563eb;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;
+    background:var(--bg);
+    color:var(--text);
+}
+
+.container{
+    width:min(1600px,95%);
+    margin:auto;
+}
+
+.hero{
+    margin:20px 0;
+    padding:30px;
+    border-radius:24px;
+
+    background:
+    radial-gradient(circle at top left,#132755 0%,transparent 35%),
+    radial-gradient(circle at top right,#1d4ed8 0%,transparent 30%),
+    linear-gradient(180deg,#0b1226,#09111f);
+
+    border:1px solid var(--border);
+}
+
+.hero h1{
+    margin:0;
+    font-size:42px;
+}
+
+.hero p{
+    color:var(--muted);
+    margin-top:10px;
+}
+
+.upload-card{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    margin-bottom:20px;
+}
+
+.upload-card input{
+    margin-top:10px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.stat{
+    background:linear-gradient(180deg,#0d1734,#0b1226);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+}
+
+.stat-label{
+    color:var(--muted);
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:2px;
+}
+
+.stat-value{
+    margin-top:10px;
+    font-size:28px;
+    font-weight:bold;
+}
+
+.search-box{
+    width:100%;
+    padding:16px;
+    border-radius:14px;
+    border:1px solid var(--border);
+
+    background:var(--panel);
+    color:white;
+    margin-bottom:20px;
+}
+
+.layout{
+    display:grid;
+    grid-template-columns:420px 1fr;
+    gap:20px;
+}
+
+.nav{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:auto;
+    max-height:80vh;
+}
+
+.viewer{
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    overflow:hidden;
+}
+
+.viewer iframe{
+    width:100%;
+    height:80vh;
+    border:none;
+    background:white;
+}
+
+.viewer-placeholder{
+    padding:50px;
+    text-align:center;
+    color:var(--muted);
+}
+
+.year{
+    margin:10px;
+}
+
+.year-header{
+    cursor:pointer;
+    padding:15px;
+    border-radius:10px;
+    background:#111c38;
+    margin-bottom:10px;
+    font-weight:bold;
+}
+
+.category{
+    margin-left:10px;
+    margin-bottom:10px;
+    background:#0f1730;
+    border-radius:10px;
+}
+
+.category-title{
+    padding:12px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.category-content{
+    display:none;
+}
+
+.report{
+    padding:10px 15px;
+    border-top:1px solid #152447;
+    cursor:pointer;
+}
+
+.report:hover{
+    background:#1a2f5f;
+}
+
+.count{
+    color:var(--blue);
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="hero">
+
+<h1>Official Session Reports</h1>
+
+<p>
+Upload your NatSoft archive folder and browse Bathurst
+practice, qualifying, shootout, warm-up and race reports.
+</p>
+
+</div>
+
+<div class="upload-card">
+
+<h3>Select NatSoft Archive Folder</h3>
+
+<input
+type="file"
+id="folderInput"
+webkitdirectory
+multiple>
+
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<div class="stat-label">Years</div>
+<div class="stat-value" id="yearsCount">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-label">Reports</div>
+<div class="stat-value" id="reportCount">0</div>
+</div>
+
+<div class="stat">
+<div class="stat-label">Categories</div>
+<div class="stat-value" id="categoryCount">0</div>
+</div>
+
+</div>
+
+<input
+class="search-box"
+id="searchBox"
+placeholder="Search reports, years, qualifying, race, warm-up ...">
+
+<div class="layout">
+
+<div class="nav">
+
+<div id="results"></div>
+
+</div>
+
+<div class="viewer">
+
+<div id="placeholder"
+class="viewer-placeholder">
+
+<h2>Select a report</h2>
+
+<p>
+The original NatSoft HTML report will open here.
+</p>
+
+</div>
+
+<iframe
+id="reportViewer"
+style="display:none">
+</iframe>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+let allFiles=[];
+
+document.getElementById("folderInput")
+.addEventListener("change", loadArchive);
+
+document.getElementById("searchBox")
+.addEventListener("input", buildView);
+
+function loadArchive(e){
+
+    allFiles =
+        [...e.target.files]
+        .filter(f =>
+            f.name.toLowerCase()
+            .endsWith(".html")
+        );
+
+    buildView();
+}
+
+function detectCategory(name){
+
+    const n=name.toLowerCase();
+
+    if(n.includes("shootout"))
+        return "Top 10 / Top 15 Shootout";
+
+    if(n.includes("warm"))
+        return "Warm-Up";
+
+    if(n.includes("qualifying combined"))
+        return "Qualifying Combined";
+
+    if(n.includes("qualifying"))
+        return "Qualifying";
+
+    if(n.includes("free practice"))
+        return "Free Practice";
+
+    if(n.includes("practice"))
+        return "Practice";
+
+    if(n.includes("lap chart"))
+        return "Lap Chart";
+
+    if(n.includes("race"))
+        return "Race";
+
+    return "Other";
+}
+
+function buildView(){
+
+    const search =
+        document
+        .getElementById("searchBox")
+        .value
+        .toLowerCase();
+
+    const archive={};
+
+    let categorySet=new Set();
+
+    allFiles.forEach(file=>{
+
+        if(
+           search &&
+           !file.name.toLowerCase().includes(search)
+        ){
+            return;
+        }
+
+        const yearMatch =
+            file.name.match(/(19|20)\d{2}/);
+
+        const year =
+            yearMatch ?
+            yearMatch[0] :
+            "Unknown";
+
+        const cat=
+            detectCategory(file.name);
+
+        categorySet.add(cat);
+
+        if(!archive[year])
+            archive[year]={};
+
+        if(!archive[year][cat])
+            archive[year][cat]=[];
+
+        archive[year][cat].push(file);
+
+    });
+
+    document.getElementById("yearsCount")
+        .innerText =
+        Object.keys(archive).length;
+
+    document.getElementById("reportCount")
+        .innerText =
+        Object.values(archive)
+        .reduce((a,b)=>
+            a+
+            Object.values(b)
+            .flat().length
+        ,0);
+
+    document.getElementById("categoryCount")
+        .innerText =
+        categorySet.size;
+
+    renderArchive(archive);
+
+}
+
+function renderArchive(archive){
+
+    let html="";
+
+    Object.keys(archive)
+    .sort()
+    .reverse()
+    .forEach(year=>{
+
+        html+=`
+        <div class="year">
+
+        <div class="year-header">
+            ${year}
+        </div>
+        `;
+
+        Object.keys(archive[year])
+        .sort()
+        .forEach(category=>{
+
+            const reports=
+                archive[year][category];
+
+            html+=`
+            <div class="category">
+
+            <div
+                class="category-title"
+                onclick="toggle(this)">
+
+                ${category}
+
+                <span class="count">
+                (${reports.length})
+                </span>
+
+            </div>
+
+            <div class="category-content">
+            `;
+
+            reports.forEach(file=>{
+
+                html+=`
+                <div
+                class="report"
+                onclick="openReport('${file.name}')">
+
+                ${cleanName(file.name)}
+
+                </div>
+                `;
+
+            });
+
+            html+=`
+            </div>
+            </div>
+            `;
+
+        });
+
+        html+=`</div>`;
+    });
+
+    document
+        .getElementById("results")
+        .innerHTML=html;
+}
+
+function cleanName(name){
+
+    let label=name
+        .replace(".html","")
+        .replace(/ - INDIVIDUAL LAP TIMES/i,
+            " (Individual Lap Times)")
+        .replace(/ - LAP CHART/i,
+            " (Lap Chart)");
+
+    return label;
+}
+
+function toggle(el){
+
+    const next=
+        el.nextElementSibling;
+
+    next.style.display=
+        next.style.display==="block"
+        ? "none"
+        : "block";
+}
+
+function openReport(fileName){
+
+    const file=
+        allFiles.find(
+            f=>f.name===fileName
+        );
+
+    if(!file)
+        return;
+
+    document
+        .getElementById("placeholder")
+        .style.display="none";
+
+    const viewer=
+        document
+        .getElementById("reportViewer");
+
+    viewer.style.display="block";
+
+    viewer.src=
+        URL.createObjectURL(file);
+}
+
+</script>
+
+</body>
+</html>

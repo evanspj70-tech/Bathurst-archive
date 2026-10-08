@@ -7,3 +7,129 @@ body{background:#0a0c10;color:#cbd5e1;font-family:system-ui,sans-serif;margin:0;
 .wrap{max-width:1200px;margin:0 auto;padding:20px;}
 #vsAuto1,#vsAuto2{display:none;}
 #vsAuto1.open,#vsAuto2.open{display:block !important;}
+/* Top Navigation Bar Styling */
+.main-nav {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.main-nav a {
+    background-color: #2a2a2a;
+    color: var(--text-main);
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.main-nav a:hover {
+    background-color: #3a3a3a;
+    border-color: #555;
+}
+
+/* Active Page State (Matches the light 'Home' tab on your main page) */
+.main-nav a.active {
+    background-color: #eadecd; /* Off-white matching index */
+    color: #121212; 
+    border-left: 4px solid #e53935; /* Bathurst Red accent */
+}
+/* Global Navigation Bar */
+.main-nav {
+  display: flex;
+  gap: 15px;
+  padding: 15px 20px;
+  background-color: #1a1a1a; /* Matches your dark theme */
+  border-bottom: 2px solid #cc0000; /* Motorsport red accent */
+  margin-bottom: 30px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.main-nav a {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 4px;
+  background-color: #2a2a2a;
+  transition: all 0.2s ease-in-out;
+}
+
+.main-nav a:hover {
+  background-color: #cc0000;
+  color: #ffffff;
+}
+/* Update Cards to dark grey instead of navy blue */
+.card, .report-panel, .info-box {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
+
+/* Update the main action button */
+button.primary-action, .upload-btn {
+    background-color: var(--accent-red);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+button.primary-action:hover, .upload-btn:hover {
+    background-color: #d32f2f; /* Slightly darker red on hover */
+}
+/* Update the grid to handle smaller buttons */
+.grid-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+  gap: 12px;
+  margin-bottom: 2rem;
+}
+
+/* Shrink the button padding to save space */
+.nav-btn, .link-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 10px 14px; 
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--accent-red);
+  border-radius: 8px;
+  color: var(--text-muted);
+  cursor: pointer;
+  text-decoration: none; 
+  transition: all 0.2s ease;
+  min-height: 60px; 
+}
+
+.nav-btn:hover, .link-btn:hover {
+  background: #2a2a2a;
+  color: var(--text-main);
+  border-color: var(--border-light);
+}
+
+.nav-btn.primary {
+  background: #e3dcd1; 
+  color: #121212;
+  border-color: #d1c8ba;
+  border-left-color: var(--accent-red);
+}
+
+.btn-number {
+  font-size: 0.75rem; 
+  color: var(--accent-red);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.btn-text {
+  font-size: 0.9rem; 
+  font-weight: 600;
+  line-height: 1.2;
+}

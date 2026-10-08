@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bathurst 1000 - Weather Archive</title>
+    <style>
+        :root {
+    --bg-color: #121212;
+    --card-bg: #1e1e1e;
+    --border-color: #333;
+    --accent-blue: #e53935; /* Changed from blue to Bathurst Red */
+    --accent-orange: #ff9800; 
+    --text-main: #f0f0f0;
+    --text-muted: #aaa;
+}
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+        }
+
+        /* Quick Condition & Scalable Filters */
+        .filter-controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .filter-btn {
+            background: #2a2a2a;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
+
+        /* Decade Grid Selector Panel */
+        .decade-selector-panel {
+            max-width: 1200px;
+            margin: 0 auto 35px auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .decade-group h3 {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .year-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .year-btn {
+            background: #252525;
+            color: var(--text-main);
+            border: 1px solid #444;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .year-btn:hover {
+            border-color: var(--accent-blue);
+            background: #2a3b40;
+        }
+
+        .year-btn.active {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Grid Container for Cards */
+        #weather-archive-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Card Styling */
+        .weather-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-left: 5px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: transform 0.2s ease;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .weather-card.track-wet, .weather-card.track-flooded, .weather-card.track-damp {
+            border-left-color: var(--accent-orange);
+        }
+
+        .weather-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .weather-stats {
+            display: flex;
+            gap: 6px;
+            font-size: 0.8rem;
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 4px;
+            margin: 10px 0;
+            justify-content: space-between;
+        }
+
+        .conditions-text, .winner, .race-title {
+            font-size: 0.9rem;
+            margin: 6px 0;
+        }
+
+        .race-title {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .notable-events {
+            font-size: 0.85rem;
+            color: #ffccbc;
+            margin-top: 8px;
+            border-top: 1px dashed rgba(255,255,255,0.1);
+            padding-top: 6px;
+        }
+
+        .no-results {
+            text-align: center;
+            grid-column: 1 / -1;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+<nav class="main-nav">
+  <a href="index.html">Main Archive</a>
+  <a href="timing_data.html" class="active">Timing Data</a>
+  <a href="Bathurst_weather.html">Weather Reports</a>
+</nav>
+
+    <header>
+        <h1>Mount Panorama Weather Archive</h1>
+        <p>Complete historical race-day weather tracking from 1960 to 2025.</p>
+    </header>
+
+    <!-- Quick Condition & Safety Car Filter Controls -->
+    <div class="filter-controls">
+        <button class="filter-btn active" id="btn-all" onclick="filterByCriteria('all')">All Years (1960–2025)</button>
+        <button class="filter-btn" id="btn-wet" onclick="filterByCriteria('wet')">🌧️ Wet Races Only</button>
+        <button class="filter-btn" id="btn-hot" onclick="filterByCriteria('hot')">☀️ Hot (&gt; 24°C)</button>
+        <button class="filter-btn" id="btn-cool" onclick="filterByCriteria('cool')">❄️ Cool (&lt; 16°C)</button>
+        <button class="filter-btn" id="btn-sc" onclick="filterByCriteria('high-sc')">🚗 High Safety Cars (≥ 5)</button>
+    </div>
+
+    <!-- Decade Grid Selector UI -->
+    <div class="decade-selector-panel">
+        <div class="decade-group">
+            <h3>1960s</h3>
+            <div class="year-pills">
+                <button class="year-btn" onclick="filterByYear(1960, this)">1960</button>
+                <button class="year-btn" onclick="filterByYear(1961, this)">1961</button>
+                <button class="year-btn" onclick="filterByYear(1962, this)">1962</button>
+                <button class="year-btn" onclick="filterByYear(1963, this)">1963</button>
+                <button class="year-btn" onclick="filterByYear(1964, this)">1964</button>
+                <button class="year-btn" onclick="filterByYear(1965, this)">1965</button>
+                <button class="year-btn" onclick="filterByYear(1966, this)">1966</button>
+                <button class="year-btn" onclick="filterByYear(1967, this)">1967</button>
+                <button class="year-btn" onclick="filterByYear(1968, this)">1968</button>
+                <button class="year-btn" onclick="filterByYear(1969, this)">1969</button>
+            </div>
+        </div>
+        <div class="decade-group">
+            <h3>1970s</h3>
+            <div class="year-pills">
+                <button class="year-btn" onclick="filterByYear(1970, this)">1970</button>
+                <button class="year-btn" onclick="filterByYear(1971, this)">1971</button>
+                <button class="year-btn" onclick="filterByYear(1972, this)">1972</button>
+                <button class="year-btn" onclick="filterByYear(1973, this)">1973</button>
+                <button class="year-btn" onclick="filterByYear(1974, this)">1974</button>
+                <button class="year-btn" onclick="filterByYear(1975, this)">1975</button>
+                <button class="year-btn" onclick="filterByYear(1976, this)">1976</button>
+                <button class="year-btn" onclick="filterByYear(1977, this)">1977</button>
+                <button class="year-btn" onclick="filterByYear(1978, this)">1978</button>
+                <button class="year-btn" onclick="filterByYear(1979, this)">1979</button>
+            </div>
+        </div>
+        <div class="decade-group">
+            <h3>1980s</h3>
+            <div class="year-pills">
+                <button class="year-btn" onclick="filterByYear(1980, this)">1980</button>
+                <button class="year-btn" onclick="filterByYear(1981, this)">1981</button>
+                <button class="year-btn" onclick="filterByYear(1982, this)">1982</button>
+                <button class="year-btn" onclick="filterByYear(1983, this)">1983</button>
+                <button class="year-btn" onclick="filterByYear(1984, this)">1984</button>
+                <button class="year-btn" onclick="filterByYear(1985, this)">1985</button>
+                <button class="year-btn" onclick="filterByYear(1986, this)">1986</button>
+                <button class="year-btn" onclick="filterByYear(1987, this)">1987</button>
+                <button class="year-btn" onclick="filterByYear(1988, this)">1988</button>
+                <button class="year-btn" onclick="filterByYear(1989, this)">1989</button>
+            </div>
+        </div>
+        <div class="decade-group">
+            <h3>1990s</h3>
+            <div class="year-pills">
+                <button class="year-btn" onclick="filterByYear(1990, this)">1990</button>
+                <button class="year-btn" onclick="filterByYear(1991, this)">1991</button>
+                <button class="year-btn" onclick="filterByYear(1992, this)">1992</button>
+                <button class="year-btn" onclick="filterByYear(1993, this)">1993</button>
+                <button class="year-btn" onclick="filterByYear(1994, this)">1994</button>
+                <button class="year-btn" onclick="filterByYear(1995, this)">1995</button>
+                <button class="year-btn" onclick="filterByYear(1996, this)">1996</button>
+                <button class="year-btn" onclick="filterByYear(1997, this)">1997</button>
+                <button class="year-btn" onclick="filterByYear(1998, this)">1998</button>
+                <button class="year-btn" onclick="filterByYear(1999, this)">1999</button>
+            </div>
+         </div>
+        <div class="decade-group">
+            <h3>1990s - Super Touring</h3>
+            <div class="year-pills">
+                <button class="year-btn" onclick="filterByYear(1997 , this)">1997 </button>
+                <button class="year-btn" onclick="filterByYear(1998 , this)">1998 </button>
+                <button class="year-btn" onclick="filterByYear(1999 , this)">1999 </button>
+            </div>
+        </div>
+        <div class="decade-group">
+            <h3>2000s</h3>
+            <div class="year-pills">
+                <button class="year-btn" onclick="filterByYear(2000, this)">2000</button>
+                <button class="year-btn" onclick="filterByYear(2001, this)">2001</button>
+                <button class="year-btn" onclick="filterByYear(2002, this)">2002</button>
+                <button class="year-btn" onclick="filterByYear(2003, this)">2003</button>
+                <button class="year-btn" onclick="filterByYear(2004, this)">2004</button>
+                <button class="year-btn" onclick="filterByYear(2005, this)">2005</button>
+                <button class="year-btn" onclick="filterByYear(2006, this)">2006</button>
+                <button class="year-btn" onclick="filterByYear(2007, this)">2007</button>
+                <button class="year-btn" onclick="filterByYear(2008, this)">2008</button>
+                <button class="year-btn" onclick="filterByYear(2009, this)">2009</button>
+            </div>
+        </div>
+        <div class="decade-group">
+            <h3>2010s</h3>
+            <div class="year-pills">
+                <button class="year-btn" onclick="filterByYear(2010, this)">2010</button>
+                <button class="year-btn" onclick="filterByYear(2011, this)">2011</button>
+                <button class="year-btn" onclick="filterByYear(2012, this)">2012</button>
+                <button class="year-btn" onclick="filterByYear(2013, this)">2013</button>
+                <button class="year-btn" onclick="filterByYear(2014, this)">2014</button>
+                <button class="year-btn" onclick="filterByYear(2015, this)">2015</button>
+                <button class="year-btn" onclick="filterByYear(2016, this)">2016</button>
+                <button class="year-btn" onclick="filterByYear(2017, this)">2017</button>
+                <button class="year-btn" onclick="filterByYear(2018, this)">2018</button>
+                <button class="year-btn" onclick="filterByYear(2019, this)">2019</button>
+                
+            </div>
+        </div>
+        <div class="decade-group">
+            <h3>2020s</h3>
+            <div class="year-pills">
+                <button class="year-btn" onclick="filterByYear(2020, this)">2020</button>
+                <button class="year-btn" onclick="filterByYear(2021, this)">2021</button>
+                <button class="year-btn" onclick="filterByYear(2022, this)">2022</button>
+                <button class="year-btn" onclick="filterByYear(2023, this)">2023</button>
+                <button class="year-btn" onclick="filterByYear(2024, this)">2024</button>
+                <button class="year-btn" onclick="filterByYear(2025, this)">2025</button>
+            </div>
+        </div>
+    </div>
+    <!-- Target Grid Container -->
+    <div id="weather-archive-container"></div>
+
+    <!-- Load the external data file -->
+<script src="bathurst-weather-data.js"></script>
+ 
+    <!-- Main page logic -->
+<script>
+        function getWeatherIcon(trackState, rainMm) {
+            const state = (trackState || "").toLowerCase();
+            if (state.includes("wet") || state.includes("flood") || rainMm > 5) return "🌧️";
+            if (state.includes("showers") || (rainMm > 0 && rainMm <= 5)) return "🌦️";
+            return "☀️";
+        }
+
+        function renderWeatherArchive(data) {
+            const container = document.getElementById("weather-archive-container");
+            container.innerHTML = "";
+
+            if (data.length === 0) {
+                container.innerHTML = `<div class="no-results">No weather records match this filter selection.</div>`;
+                return;
+            }
+
+            data.forEach(race => {
+                const w = race.weather || {};
+                const icon = getWeatherIcon(w.track_state, w.rainfall_mm);
+                const trackClass = w.track_state ? w.track_state.toLowerCase().split(' ')[0] : 'dry';
+                const safetyCars = w.safety_cars ?? 0;
+
+                const card = document.createElement("div");
+                card.className = `weather-card track-${trackClass}`;
+                card.innerHTML = `
+                  <div class="weather-header">
+                    <span class="weather-year">${race.year}</span>
+                    <span class="weather-icon" title="${w.track_state || 'Dry'}">${icon}</span>
+                  </div>
+                  <div class="race-title">${race.race_name || 'Bathurst 1000'}</div>
+                  <p class="winner"><strong>Winners:</strong> ${race.winner}</p>
+                  <div class="weather-stats">
+                    <span>🌡️ Max: ${w.temp_max_c ?? 'N/A'}°C</span>
+                    <span>💧 Rain: ${w.rainfall_mm ?? 0} mm</span>
+                    <span>🚗 SC: ${safetyCars}</span>
+                  </div>
+                  <p class="conditions-text"><strong>Conditions:</strong> ${w.conditions || 'N/A'}</p>
+                  ${w.notable_events ? `<p class="notable-events"><em>⚡ ${w.notable_events}</em></p>` : ''}
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Scalable Filter Logic
+        function filterByCriteria(criteria) {
+            document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${criteria === 'high-sc' ? 'sc' : criteria}`).classList.add('active');
+
+            let filteredData = bathurstRaceData;
+
+            if (criteria === 'wet') {
+                filteredData = bathurstRaceData.filter(r => {
+                    const w = r.weather || {};
+                    return (w.rainfall_mm > 2.0) || (w.track_state && (w.track_state.toLowerCase().includes('wet') || w.track_state.toLowerCase().includes('damp')));
+                });
+            } else if (criteria === 'hot') {
+                filteredData = bathurstRaceData.filter(r => (r.weather?.temp_max_c || 0) > 24.0);
+            } else if (criteria === 'cool') {
+                filteredData = bathurstRaceData.filter(r => (r.weather?.temp_max_c || 99) < 16.0);
+            } else if (criteria === 'high-sc') {
+                filteredData = bathurstRaceData.filter(r => (r.weather?.safety_cars || 0) >= 5);
+            }
+
+            renderWeatherArchive(filteredData);
+        }
+
+        // Filter by Specific Year Button
+        function filterByYear(year, buttonElement) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.year-btn').forEach(btn => btn.classList.remove('active'));
+            buttonElement.classList.add('active');
+
+            const filteredData = bathurstRaceData.filter(r => r.year === year);
+            renderWeatherArchive(filteredData);
+        }
+
+        // Initial render on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            renderWeatherArchive(bathurstRaceData);
+        });
+    </script>
+</body>
+</html>

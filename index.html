@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="style.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bathurst Race Results &amp; Lap Charts — All Years</title>
@@ -17,7 +18,6 @@
 <meta name="twitter:description" content="Explore the interactive Bathurst race archive, with lap-by-lap charts and historical results from 1960 to 2025.">
 <meta name="twitter:image" content="Programme%20covers/Cover%20COLLAGE.jpg">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="style.css">
 
 <style id="enhancements-css">
 /* --- UX Enhancements v3 - additive only, does not reset base fonts/colors --- */
@@ -645,43 +645,58 @@ html, body { margin:0; padding:0; background:var(--bg); color:var(--text); font-
 /* === RESTORED TO MATCH SCREENSHOT 1 === */
 
 /* === RESTORED TO MATCH SCREENSHOT 1 FROM 4 HOURS AGO === */
+
 /* Tabs - checker tiles with numbers and orange lines */
 .tabs {
-  display:grid;
-  grid-template-columns:repeat(4, minmax(0, 1fr));
-  grid-template-rows:repeat(2, minmax(44px, auto));
-  grid-auto-flow:column;
-  gap:8px;
-  margin:12px 0 20px 0;
-  padding:0;
-  background:transparent;
-  border:none;
-  position:relative;
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  grid-template-rows: repeat(2, 1fr) !important;
+  gap: 8px;
+  margin: 12px 0 20px 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  width: 100%;
 }
 
+/* Explicitly map each button to its exact Grid Row and Column */
+/* Top Row: 1, 3, 5, 7 */
+.tabs .tabbtn:nth-child(1) { grid-column: 1; grid-row: 1; }
+.tabs .tabbtn:nth-child(3) { grid-column: 2; grid-row: 1; }
+.tabs .tabbtn:nth-child(5) { grid-column: 3; grid-row: 1; }
+.tabs .tabbtn:nth-child(7) { grid-column: 4; grid-row: 1; }
+
+/* Bottom Row: 2, 4, 6, 8 */
+.tabs .tabbtn:nth-child(2) { grid-column: 1; grid-row: 2; }
+.tabs .tabbtn:nth-child(4) { grid-column: 2; grid-row: 2; }
+.tabs .tabbtn:nth-child(6) { grid-column: 3; grid-row: 2; }
+.tabs .tabbtn:nth-child(8) { grid-column: 4; grid-row: 2; }
+
 .tabbtn {
-  position:relative;
-  padding:17px 10px 8px;
-  border-radius:8px;
-  border:1px solid #2a2f40;
-  background:#1e222e;
+  position: relative;
+  width: 100%;
+  height: 100%; 
+  padding: 17px 10px 8px;
+  border-radius: 8px;
+  border: 1px solid #2a2f40;
+  background-color: #1e222e;
   background-image: 
-    linear-gradient(45deg, #252a3a 25%, transparent 25%),
-    linear-gradient(-45deg, #252a3a 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #252a3a 75%),
-    linear-gradient(-45deg, transparent 75%, #252a3a 75%);
-  background-size:16px 16px;
-  background-position:0 0, 0 8px, 8px -8px, -8px 0px;
-  color:#9aa5bd;
-  font-size:12px;
-  font-weight:600;
-  text-align:left;
-  cursor:pointer;
-  transition:all .15s ease;
-  min-height:44px;
-  display:flex;
-  align-items:center;
-  overflow:hidden;
+    linear-gradient(45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%);
+  background-size: 20px 20px; /* Slightly larger squares look better on buttons */
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px; /* Math must match exactly half the background-size */
+  color: #9aa5bd;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+  transition: all .15s ease;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
 .tabbtn::before {
@@ -715,12 +730,12 @@ html, body { margin:0; padding:0; background:var(--bg); color:var(--text); font-
 }
 
 .tabbtn.active {
-  background:#d4d0c8;
-  background-image:none;
-  color:#1a1d25;
-  border:1px solid #d4d0c8;
-  font-weight:700;
-  box-shadow:0 2px 8px rgba(0,0,0,.2);
+  background-color: #e5e3db; /* Your active tab color */
+  background-image: 
+    linear-gradient(45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(0, 0, 0, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(0, 0, 0, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(0, 0, 0, 0.05) 75%);
 }
 
 .tabbtn.active::before {
@@ -1208,8 +1223,11 @@ html.light .vs-auto-item > small {
 
 </head>
 <body>
-<button class="theme-toggle" id="themeToggle" title="Toggle light/dark">🌙 Dark / Light ☀️</button>
 
+    <!-- Theme Toggle -->
+    <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode">
+        <span class="icon-dark">🌙</span> Dark / Light <span class="icon-light">☀️</span>
+    </button>
 <!-- PRIVATE ACCESS GATE — stops casual public access, free, no Netlify Pro needed -->
 <style id="gate-css">
   #privateGate { position:fixed; inset:0; background:#0a0c10; z-index:99999; display:flex; align-items:center; justify-content:center; padding:20px; }
@@ -1280,7 +1298,9 @@ html.light .vs-auto-item > small {
     <button class="tabbtn" data-tab="driverStats" data-grid-number="5" aria-controls="driverStatsTab" aria-selected="false">Driver Stats</button>
     <button class="tabbtn" data-tab="vsCompare" data-grid-number="6" aria-controls="vsCompareTab" aria-selected="false">Driver vs Driver</button>
     <button class="tabbtn cover-gallery-tab" data-tab="programmeCovers" data-grid-number="7" aria-controls="programmeCoversTab" aria-selected="false">Programme Covers</button>
+    <button class="tabbtn" data-tab="timingData" data-grid-number="8" aria-controls="timingData" aria-selected="false">Timing Data</button>
   </div>
+</div>
   <section id="homeTab" class="home-tab">
     <p class="home-eyebrow">Bathurst race history, brought to life</p>
     <header class="home-hero">
@@ -1556,8 +1576,7 @@ html.light .vs-auto-item > small {
     </section>
   </section>
 
-  <section id="vsCompareTab" hidden>
-    <div class="vs-heading-row">
+  <section id="vsCompareTab" class="tabcontent" hidden style="display: none;">
       <h1>Driver vs Driver Comparison</h1>
       <label class="sr-only" for="vsPopularMatchup">Popular matchups</label>
       <select id="vsPopularMatchup" class="vs-popular-matchup" aria-label="Popular matchups">
@@ -1578,9 +1597,13 @@ html.light .vs-auto-item > small {
     </div>
     <div id="vsResults" style="margin-top:16px;"></div>
   </section>
+ 
+  <section id="timingData" class="tabcontent">
+  <!-- Ensure the src matches your actual file name exactly -->
+  <iframe src="timing_data.html" width="100%" height="800px" style="border: none;"></iframe>
+</section>
 
-  <section id="earlyResultsTab" hidden>
-    <div class="early-results-head">
+  <section id="earlyResultsTab" class="tabcontent" hidden>
       <div>
         <h1>Race Results</h1>
         <p id="earlyResultsEvent" class="results-summary"></p>
@@ -2558,6 +2581,7 @@ function render(yearKey) {
         const earlyTab = document.getElementById('earlyResultsTab');
         const driverStatsTab = document.getElementById('driverStatsTab');
         const vsTab = document.getElementById('vsCompareTab');
+        const timingTab = document.getElementById('timingData');
         
         if (homeTab) homeTab.hidden = activeTab !== 'home';
         if (progTab) progTab.hidden = activeTab !== 'programmeCovers';
@@ -2566,6 +2590,13 @@ function render(yearKey) {
         if (earlyTab) earlyTab.hidden = activeTab !== 'earlyResults';
         if (driverStatsTab) driverStatsTab.hidden = activeTab !== 'driverStats';
         if (vsTab) vsTab.hidden = activeTab !== 'vsCompare';
+        if (timingTab) timingTab.hidden = activeTab !== 'timingData';
+        // Also handle style.display fallback for tabs that use it
+        if (timingTab && timingTab.style) {
+          // ensure hidden attribute takes precedence, but sync display for older sections
+          if (activeTab === 'timingData') timingTab.style.display = '';
+          else if (timingTab.hidden) timingTab.style.display = 'none';
+        }
         
         const isStats = activeTab === 'stats';
         if (isStats && typeof statsBuilt !== 'undefined' && !statsBuilt && typeof buildStats === 'function') { 
@@ -7138,6 +7169,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
   setTimeout(initVsCompare, 2000);
 })();
 </script>
-
+<section id="timingData" class="tabcontent" hidden style="display: none;">
+  <iframe src="timing_data.html" width="100%" height="800px" style="border: none;"></iframe>
+</section>
 </body>
 </html>
